@@ -88,7 +88,7 @@ The end-to-end deployment tool, `concierge langgraph deploy`, will create a new 
 
 The click-to-deploy LangGraph demo uses the [project-factory](https://registry.terraform.io/modules/terraform-google-modules/project-factory/google/latest) terraform module to automate the creation of a demo project and infrastructure provisioning. The module provides a helper script ([documentation](https://github.com/terraform-google-modules/terraform-google-project-factory?tab=readme-ov-file#script-helper)) to check that the seed project is configured correctly. It is recommended to run this script before running the deployment to ensure there won't be any errors.
 
-### Configure the Langgraph demo deployment
+### Configure the LangGraph demo deployment
 
 Arguments to the CLI can either be provided on the command line or via a config file. An example config file might look like:
 

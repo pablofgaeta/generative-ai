@@ -78,7 +78,7 @@ Navigate to [https://localhost:8080/](https://localhost:8080/) to use the Stream
 
 The end-to-end deployment tool, `concierge langgraph deploy`, will create a new demo project, provision necessary infrastructure, and deploy the backend LangGraph server and frontend Streamlit app.
 
-### GCP Architecture
+### Google Cloud Architecture
 
 <div align="center" width="100%">
   <img src="./docs/images/langgraph-architecture.png" alt="GenAI Experience Concierge LangGraph Demo Architecture" width="75%" />

@@ -4,18 +4,18 @@
 
 ## Table of Contents
 
-| Section    | Standalone Notebook | Demo Source Code |
-|------------|----------------------|------------------|
+| Section                                                   | Standalone Notebook                                        | Demo Source Code                                                                                       |
+| --------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
 | [Guardrail Classifier Agent](#guardrail-classifier-agent) | [guardrail-classifier.ipynb](./guardrail-classifier.ipynb) | [gemini_chat_with_guardrails](../langgraph-demo/backend/concierge/agents/gemini_chat_with_guardrails/) |
-| [Semantic Router Agent](#semantic-router-agent) | [semantic-router.ipynb](./semantic-router.ipynb) | [semantic_router](../langgraph-demo/backend/concierge/agents/semantic_router/) |
-| [Function Calling Agent](#function-calling-agent) | [function-calling.ipynb](./function-calling.ipynb) | [function_calling](../langgraph-demo/backend/concierge/agents/function_calling/) |
-| [Task Planner](#task-planner) | [task-planner.ipynb](./task-planner.ipynb) | [task_planner](../langgraph-demo/backend/concierge/agents/task_planner/) |
+| [Semantic Router Agent](#semantic-router-agent)           | [semantic-router.ipynb](./semantic-router.ipynb)           | [semantic_router](../langgraph-demo/backend/concierge/agents/semantic_router/)                         |
+| [Function Calling Agent](#function-calling-agent)         | [function-calling.ipynb](./function-calling.ipynb)         | [function_calling](../langgraph-demo/backend/concierge/agents/function_calling/)                       |
+| [Task Planner](#task-planner)                             | [task-planner.ipynb](./task-planner.ipynb)                 | [task_planner](../langgraph-demo/backend/concierge/agents/task_planner/)                               |
 
 ## Guardrail Classifier Agent
 
 When building agentic applications, additional guardrails beyond built-in safety settings are often necessary to constrain the scope of interactions and avoid off-topic or adversarial queries. This demo focuses on implementing an LLM-based guardrail classifier to determine whether to answer or reject every user input.
 
-There are two main approaches during implementation that result in a tradeoff between compute cost and latency. Running the classifier sequentially before response generation results in higher latency but lower cost due to the ability to prevent the answer generation phase. Running the classifier in parallel with generation results in lower latency but higher cost, since the guardrail classifier can interrupt generation and respond quicker in the case of a blocked response.
+There are two main approaches during implementation that result in a trade-off between compute cost and latency. Running the classifier sequentially before response generation results in higher latency but lower cost due to the ability to prevent the answer generation phase. Running the classifier in parallel with generation results in lower latency but higher cost, since the guardrail classifier can interrupt generation and respond quicker in the case of a blocked response.
 
 This demo uses the first approach, but could be modified to run in parallel in case latency is critical.
 
@@ -52,16 +52,18 @@ This demo utilizes a collection of function declarations to search over a synthe
 Retail Search Assistant Use Cases:
 
 1. Store Search. Filter by:
-    * Store Name
-    * Search Radius
-    * Product IDs
-    * Number of Results
+
+   - Store Name
+   - Search Radius
+   - Product IDs
+   - Number of Results
 
 1. Product Search. Filter and rank by:
-    * Store IDs
-    * Price Range
-    * Number of Results
-    * Product Name/Description Semantic Similarity
+
+   - Store IDs
+   - Price Range
+   - Number of Results
+   - Product Name/Description Semantic Similarity
 
 1. Inventory Search for a given product-store pair.
 

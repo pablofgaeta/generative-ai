@@ -8,8 +8,8 @@ from typing import Generator, Protocol
 import uuid
 
 from concierge_ui import auth, remote_settings
-import streamlit as st
 from langgraph.pregel import remote
+import streamlit as st
 
 logger = logging.getLogger(__name__)
 
@@ -107,4 +107,6 @@ def build_demo_page(
             )
 
         # Add assistant response to chat history
-        st.session_state[messages_key].append({"role": "assistant", "content": response})
+        st.session_state[messages_key].append(
+            {"role": "assistant", "content": response}
+        )

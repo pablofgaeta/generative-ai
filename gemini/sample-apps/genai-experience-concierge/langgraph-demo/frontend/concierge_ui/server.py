@@ -3,8 +3,7 @@
 # agreement with Google.
 """Streamlit demo home page."""
 
-import streamlit as st
-
+from concierge_ui import demo_page, remote_settings
 from concierge_ui.agents import (
     function_calling,
     gemini_chat,
@@ -12,7 +11,7 @@ from concierge_ui.agents import (
     semantic_router,
     task_planner,
 )
-from concierge_ui import demo_page, remote_settings
+import streamlit as st
 
 settings = remote_settings.RemoteAgentConfigs()
 

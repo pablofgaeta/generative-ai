@@ -41,4 +41,4 @@ dev = [
 packages = ["concierge"]
 
 [tool.pylint.messages_control]
-disable = ["too-many-arguments", "too-many-positional-arguments", "duplicate-code"]
+disable = ["too-many-arguments", "too-many-positional-arguments", "duplicate-code", "wrong-import-order"]

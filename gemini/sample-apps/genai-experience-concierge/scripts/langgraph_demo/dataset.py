@@ -9,7 +9,6 @@ from typing import Callable, TypedDict, TypeVar
 
 from google.api_core import exceptions, retry
 from google.cloud import bigquery
-
 from scripts.langgraph_demo import defaults
 
 connection_permission_retry_config = retry.Retry(

@@ -34,4 +34,4 @@ dev = [
 packages = ["concierge_ui"]
 
 [tool.pylint.messages_control]
-disable = ["too-many-arguments", "too-many-positional-arguments", "invalid-name"]
+disable = ["too-many-arguments", "too-many-positional-arguments", "invalid-name", "wrong-import-order"]

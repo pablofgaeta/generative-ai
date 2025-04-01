@@ -38,4 +38,4 @@ packages = ["./scripts"]
 packages = ["scripts"]
 
 [tool.pylint.messages_control]
-disable = ["too-many-arguments", "too-many-positional-arguments"]
+disable = ["too-many-arguments", "too-many-positional-arguments", "wrong-import-order"]

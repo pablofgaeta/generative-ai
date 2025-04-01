@@ -3,9 +3,6 @@
 # agreement with Google.
 """LangGraph agent for a task planner assistant."""
 
-from langchain_core.runnables import config
-from langgraph.graph import StateGraph
-
 from concierge.agents.task_planner import schemas
 from concierge.agents.task_planner.nodes import (
     executor,
@@ -13,6 +10,8 @@ from concierge.agents.task_planner.nodes import (
     post_process,
     reflector,
 )
+from langchain_core.runnables import config
+from langgraph.graph import StateGraph
 
 FINAL_NODE = schemas.POST_PROCESS_NODE_NAME
 

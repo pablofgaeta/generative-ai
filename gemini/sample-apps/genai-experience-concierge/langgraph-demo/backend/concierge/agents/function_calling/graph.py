@@ -3,11 +3,10 @@
 # agreement with Google.
 """LangGraph agent for a function calling assistant."""
 
-from langchain_core.runnables import config
-from langgraph.graph import StateGraph
-
 from concierge.agents.function_calling import schemas
 from concierge.agents.function_calling.nodes import chat, post_process
+from langchain_core.runnables import config
+from langgraph.graph import StateGraph
 
 FINAL_NODE = schemas.POST_PROCESS_NODE_NAME
 

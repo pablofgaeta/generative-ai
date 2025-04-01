@@ -6,7 +6,7 @@
 import logging
 from typing import Any, AsyncGenerator, Optional, Sequence, Union, cast
 
-import pydantic
+from concierge.langgraph_server import checkpoint_saver, schemas
 from langchain_core.runnables import config as lc_config
 from langgraph import graph
 from langgraph import types as lg_types
@@ -14,9 +14,7 @@ from langgraph.checkpoint import base
 from langgraph.checkpoint.serde import jsonplus
 from langgraph.checkpoint.serde.base import SerializerProtocol
 from langgraph_sdk import schema
-
-from concierge.langgraph_server import checkpoint_saver, schemas
-
+import pydantic
 
 logger = logging.getLogger(__name__)
 

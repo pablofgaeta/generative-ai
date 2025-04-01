@@ -3,9 +3,6 @@
 # agreement with Google.
 """LangGraph graph for an agent with a semantic router."""
 
-from langchain_core.runnables import config
-from langgraph.graph import StateGraph
-
 from concierge.agents.semantic_router import schemas
 from concierge.agents.semantic_router.nodes import (
     customer_service_assistant,
@@ -13,6 +10,8 @@ from concierge.agents.semantic_router.nodes import (
     retail_assistant,
     router,
 )
+from langchain_core.runnables import config
+from langgraph.graph import StateGraph
 
 FINAL_NODE = schemas.POST_PROCESS_NODE_NAME
 

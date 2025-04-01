@@ -3,11 +3,10 @@
 # agreement with Google.
 """Auth utilities for authenticating to Google Cloud services."""
 
+from concierge_ui import remote_settings as settings
 from google import auth
 from google.auth import compute_engine, impersonated_credentials
 from google.auth.transport import requests
-
-from concierge_ui import remote_settings as settings
 
 
 def get_auth_headers(agent_config: settings.RemoteAgentConfig) -> dict[str, str]:

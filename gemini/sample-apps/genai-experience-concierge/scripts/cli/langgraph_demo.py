@@ -6,16 +6,15 @@
 import uuid
 
 import click
-import yaml
-
 from scripts.langgraph_demo import (
     backend,
+    cloudbuild,
     dataset,
     defaults,
-    cloudbuild,
     frontend,
     terraform,
 )
+import yaml
 
 
 @click.option(

@@ -4,9 +4,8 @@
 """Tools for deploying the end-to-end Concierge demo."""
 
 import click
-import yaml
-
 from scripts.cli import langgraph_demo
+import yaml
 
 
 @click.group(help="Gen AI Experience Concierge demo tool.")

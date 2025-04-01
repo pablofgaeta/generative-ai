@@ -2,10 +2,9 @@
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
 
-from langgraph.pregel import remote
-
 from concierge_ui import auth, demo_page
 from concierge_ui import remote_settings as settings
+from langgraph.pregel import remote
 
 config = settings.RemoteAgentConfigs().semantic_router
 

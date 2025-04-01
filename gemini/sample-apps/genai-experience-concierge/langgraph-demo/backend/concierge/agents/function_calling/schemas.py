@@ -4,11 +4,11 @@
 """Schemas for the function calling agent."""
 
 import datetime
-import uuid
 from typing import Literal, Optional, TypedDict
+import uuid
 
-import pydantic
 from google.genai import types as genai_types  # type: ignore[import-untyped]
+import pydantic
 
 # Agent config settings
 

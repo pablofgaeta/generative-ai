@@ -4,12 +4,11 @@
 """Streamlit demo page builder to avoid duplicating code."""
 
 import logging
-import uuid
 from typing import Generator, Protocol
-
-import streamlit as st
+import uuid
 
 from concierge_ui import remote_settings as settings
+import streamlit as st
 
 logger = logging.getLogger(__name__)
 
@@ -96,4 +95,6 @@ def build_demo_page(
             )
 
         # Add assistant response to chat history
-        st.session_state[messages_key].append({"role": "assistant", "content": response})
+        st.session_state[messages_key].append(
+            {"role": "assistant", "content": response}
+        )

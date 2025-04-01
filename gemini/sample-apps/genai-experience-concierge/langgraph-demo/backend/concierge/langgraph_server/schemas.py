@@ -5,9 +5,9 @@
 
 from typing import Any, AsyncIterator, Literal, Optional, Protocol, Sequence, Union
 
-import pydantic
 from langgraph.checkpoint.serde.base import SerializerProtocol
 from langgraph_sdk import schema
+import pydantic
 
 
 class MemoryBackendConfig(pydantic.BaseModel):

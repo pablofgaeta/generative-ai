@@ -3,15 +3,14 @@
 # agreement with Google.
 """LangGraph agent for a chat assistant with guardrail classification."""
 
-from langchain_core.runnables import config
-from langgraph.graph import StateGraph
-
 from concierge.agents.gemini_chat_with_guardrails import schemas
 from concierge.agents.gemini_chat_with_guardrails.nodes import (
     chat,
     guardrails,
     post_process,
 )
+from langchain_core.runnables import config
+from langgraph.graph import StateGraph
 
 FINAL_NODE = schemas.POST_PROCESS_NODE_NAME
 

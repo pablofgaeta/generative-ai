@@ -2,10 +2,9 @@
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
 
-from langgraph.pregel import remote
-
 from concierge_ui import auth, demo_page
 from concierge_ui import remote_settings as settings
+from langgraph.pregel import remote
 
 config = settings.RemoteAgentConfigs().guardrail
 
@@ -46,7 +45,9 @@ def chat_handler(message: str, thread_id: str):
             classification_emoji = "❌" if is_blocked else "✅"
             reason = chunk["guardrail_classification"]["reason"]
 
-            text = f"Guardrail classification: {classification_emoji}\n\nReason: {reason}"
+            text = (
+                f"Guardrail classification: {classification_emoji}\n\nReason: {reason}"
+            )
             current_source = "guardrail_classification"
 
         elif "text" in chunk:

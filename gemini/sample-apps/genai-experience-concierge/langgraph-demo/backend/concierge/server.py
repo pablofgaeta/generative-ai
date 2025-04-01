@@ -5,8 +5,6 @@
 
 import contextlib
 
-import fastapi
-
 from concierge import agent_settings as settings
 from concierge.agents import (
     function_calling,
@@ -16,6 +14,7 @@ from concierge.agents import (
     task_planner,
 )
 from concierge.langgraph_server import fastapi_app, langgraph_agent
+import fastapi
 
 # Build compiled LangGraph agents with optional checkpointer based on config
 

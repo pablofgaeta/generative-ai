@@ -3,9 +3,6 @@
 # agreement with Google.
 """Runtime settings for the LangGraph agent server."""
 
-import pydantic
-import pydantic_settings
-
 from concierge.agents import (
     function_calling,
     gemini_chat,
@@ -14,6 +11,8 @@ from concierge.agents import (
     task_planner,
 )
 from concierge.langgraph_server import schemas
+import pydantic
+import pydantic_settings
 
 
 class AgentServerConfig(pydantic_settings.BaseSettings):

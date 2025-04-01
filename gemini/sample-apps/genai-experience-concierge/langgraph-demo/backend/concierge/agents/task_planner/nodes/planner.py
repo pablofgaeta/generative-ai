@@ -83,7 +83,7 @@ async def ainvoke(
 
     else:
         raise TypeError(
-            "Unsupported plan reflection action: %s", type(plan_reflection.action)
+            f"Unsupported plan reflection action: {type(plan_reflection.action)}"
         )
 
     return lg_types.Command(

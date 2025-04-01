@@ -42,4 +42,4 @@ packages = ["concierge"]
 disable_error_code = ["import-untyped"]
 
 [tool.pylint.messages_control]
-disable = ["too-many-arguments", "too-many-positional-arguments", "duplicate-code", "wrong-import-order"]
+disable=["E0401","C0301","R0903","R1710","C0114","R0915","W1514","W1203","I1101", "wrong-import-order"]

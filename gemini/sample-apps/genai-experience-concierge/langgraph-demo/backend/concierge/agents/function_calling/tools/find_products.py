@@ -109,7 +109,12 @@ def generate_find_products_handler(
             ProductSearchResult: The return value. Object including top matched products and/or an error message.
         """
 
-        nonlocal project, cymbal_dataset_location, cymbal_products_table_uri, cymbal_inventory_table_uri, cymbal_embedding_model_uri
+        nonlocal \
+            project, \
+            cymbal_dataset_location, \
+            cymbal_products_table_uri, \
+            cymbal_inventory_table_uri, \
+            cymbal_embedding_model_uri
 
         if max_results >= MAX_PRODUCT_RESULTS:
             print(
@@ -367,8 +372,7 @@ WHERE
         )
     )
 
-    if product_search_query:
-        query = f"""
+    query = f"""
 SELECT
     base.uniq_id AS id,
     base.product_name AS name,
@@ -401,13 +405,13 @@ FROM
 LIMIT @max_results
 """.strip()
 
-        query_parameters.append(
-            bigquery.ScalarQueryParameter(
-                name="semantic_search_query",
-                type_=bigquery.SqlParameterScalarTypes.STRING,
-                value=product_search_query,
-            )
+    query_parameters.append(
+        bigquery.ScalarQueryParameter(
+            name="semantic_search_query",
+            type_=bigquery.SqlParameterScalarTypes.STRING,
+            value=product_search_query,
         )
+    )
 
     query_job_config = bigquery.QueryJobConfig()
     query_job_config.query_parameters = query_parameters

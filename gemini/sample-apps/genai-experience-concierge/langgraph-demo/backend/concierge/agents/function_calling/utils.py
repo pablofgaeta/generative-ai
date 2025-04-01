@@ -15,6 +15,7 @@ import pydantic
 logger = logging.getLogger(__name__)
 
 
+# pylint: disable=too-many-arguments,too-many-positional-arguments
 async def generate_content_stream(
     model: str,
     contents: list[genai_types.Content],
@@ -48,12 +49,12 @@ async def generate_content_stream(
         logger.warning("Maximum depth reached, stopping generation.")
         return
 
-    response: AsyncIterator[genai_types.GenerateContentResponse] = (
-        await client.aio.models.generate_content_stream(
-            model=model,
-            contents=contents,
-            config=config,
-        )
+    response: AsyncIterator[
+        genai_types.GenerateContentResponse
+    ] = await client.aio.models.generate_content_stream(
+        model=model,
+        contents=contents,
+        config=config,
     )
 
     # iterate over chunk in main request
@@ -115,6 +116,9 @@ async def generate_content_stream(
                 fn_map=fn_map,
             ):
                 yield content
+
+
+# pylint: enable=too-many-arguments,too-many-positional-arguments
 
 
 async def run_function_async(

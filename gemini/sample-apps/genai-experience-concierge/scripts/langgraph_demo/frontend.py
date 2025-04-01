@@ -3,6 +3,8 @@
 # agreement with Google.
 """Tools for managing the demo frontend application."""
 
+# pylint: disable=too-many-arguments,too-many-positional-arguments
+
 import subprocess
 import tempfile
 

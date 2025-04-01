@@ -3,6 +3,8 @@
 # agreement with Google.
 """Tools for generating a mock Cymbal Retail dataset."""
 
+# pylint: disable=too-many-arguments,too-many-positional-arguments
+
 import json
 import subprocess
 from typing import Callable, TypedDict, TypeVar

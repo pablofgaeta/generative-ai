@@ -19,6 +19,7 @@ import pydantic
 logger = logging.getLogger(__name__)
 
 
+# pylint: disable=too-many-arguments,too-many-positional-arguments
 class LangGraphAgent:
     """
     A class that wraps a LangGraph StateGraph and provides methods to interact with it.
@@ -288,6 +289,9 @@ class LangGraphAgent:
 
         async for chunk in stream_response:
             yield (cast(str, stream_mode), chunk)
+
+
+# pylint: enable=too-many-arguments,too-many-positional-arguments
 
 
 def _checkpoint_from_runnable_config(

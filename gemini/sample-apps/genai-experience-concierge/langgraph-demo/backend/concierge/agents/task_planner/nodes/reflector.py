@@ -56,9 +56,9 @@ async def ainvoke(
     plan = current_turn.get("plan")
     assert plan is not None, "plan must be set"
 
-    assert all(
-        task.result is not None for task in plan.tasks
-    ), "Must execute each plan task before reflection."
+    assert all(task.result is not None for task in plan.tasks), (
+        "Must execute each plan task before reflection."
+    )
 
     plan_reflection = await reflect_plan.reflect_plan(
         user_input=user_input,
@@ -91,7 +91,7 @@ async def ainvoke(
         stream_writer({"response": current_turn["response"]})
     else:  # never
         raise TypeError(
-            "Unsupported plan reflection action: %s", type(plan_reflection.action)
+            f"Unsupported plan reflection action: {type(plan_reflection.action)}"
         )
 
     return lg_types.Command(

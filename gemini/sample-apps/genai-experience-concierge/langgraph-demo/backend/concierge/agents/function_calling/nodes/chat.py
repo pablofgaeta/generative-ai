@@ -94,9 +94,9 @@ async def ainvoke(
             user_longitude=user_longitude,
         )
         find_stores_fd = find_stores.find_stores_fd
-        assert find_stores_fd.name is not None, (
-            "Function name must be set for automatic function calling"
-        )
+        assert (
+            find_stores_fd.name is not None
+        ), "Function name must be set for automatic function calling"
 
         find_products_handler = find_products.generate_find_products_handler(
             project=agent_config.project,
@@ -106,9 +106,9 @@ async def ainvoke(
             cymbal_embedding_model_uri=agent_config.cymbal_embedding_model_uri,
         )
         find_products_fd = find_products.find_products_fd
-        assert find_products_fd.name is not None, (
-            "Function name must be set for automatic function calling"
-        )
+        assert (
+            find_products_fd.name is not None
+        ), "Function name must be set for automatic function calling"
 
         find_inventory_handler = find_inventory.generate_find_inventory_handler(
             project=agent_config.project,
@@ -116,9 +116,9 @@ async def ainvoke(
             cymbal_inventory_table_uri=agent_config.cymbal_inventory_table_uri,
         )
         find_inventory_fd = find_inventory.find_inventory_fd
-        assert find_inventory_fd.name is not None, (
-            "Function name must be set for automatic function calling"
-        )
+        assert (
+            find_inventory_fd.name is not None
+        ), "Function name must be set for automatic function calling"
 
         # generate streaming response
         response = utils.generate_content_stream(

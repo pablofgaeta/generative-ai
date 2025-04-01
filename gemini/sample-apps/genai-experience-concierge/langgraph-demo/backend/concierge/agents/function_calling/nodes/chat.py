@@ -175,7 +175,7 @@ async def ainvoke(
             if used_content:
                 new_contents.append(content.model_copy(deep=True))
 
-    except Exception as e:  # pylint: disable=too-broad-exception-caught
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logger.exception(e)
         # unexpected error, display it
         response_text = f"An unexpected error occurred during generation, please try again.\n\nError = {str(e)}"

@@ -92,7 +92,7 @@ async def ainvoke(
             parts=[genai_types.Part.from_text(text=response_text)],
         )
 
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logger.exception(e)
         # unexpected error, display it
         response_text = f"An unexpected error occurred during generation, please try again.\n\nError = {str(e)}"

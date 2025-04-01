@@ -113,7 +113,7 @@ async def ainvoke(
             response.text.strip()
         )
 
-    except Exception as e:  # pylint: disable=too-broad-exception-caught
+    except Exception as e:  # pylint: disable=broad-exception-caught
         logger.exception(e)
         error_reason = str(e)
 

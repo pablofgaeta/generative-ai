@@ -2,6 +2,10 @@
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
 
+# disable duplicate code since chat handlers for each agent may be very similar but not
+# exactly the same
+# pylint: disable=duplicate-code
+
 from typing import Generator
 
 from langgraph.pregel import remote
@@ -88,8 +92,7 @@ def _stringify_plan(plan: dict, include_results: bool = True) -> str:
         str: The formatted execution plan string.
     """
     tasks_str = "\n\n".join(
-        f"**Task #{idx + 1}**\n\n"
-        + _stringify_task(task, include_results=include_results)
+        f"**Task #{idx + 1}**\n\n" + _stringify_task(task, include_results=include_results)
         for idx, task in enumerate(plan["tasks"])
     )
 

@@ -2,6 +2,10 @@
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
 
+# disable duplicate code since chat handlers for each agent may be very similar but not
+# exactly the same
+# pylint: disable=duplicate-code
+
 import json
 from typing import Generator
 

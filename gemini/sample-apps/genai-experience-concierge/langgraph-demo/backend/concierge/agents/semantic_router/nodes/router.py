@@ -88,9 +88,6 @@ async def ainvoke(
     current_turn = state.get("current_turn")
     assert current_turn is not None, "current turn must be set"
 
-    user_input = current_turn.get("user_input")
-    assert user_input is not None, "user input must be set"
-
     # Initialize generate model
     client = genai.Client(
         vertexai=True,
@@ -98,14 +95,12 @@ async def ainvoke(
         location=agent_config.region,
     )
 
-    # Add new user input to history
-    turns = state.get("turns", [])[: agent_config.max_router_turn_history]
-    history = [content for turn in turns for content in turn.get("messages", [])]
-    user_content = genai_types.Content(
-        role="user",
-        parts=[genai_types.Part.from_text(text=user_input)],
-    )
-    contents = history + [user_content]
+    user_content = load_user_content(current_turn=current_turn)
+    contents = [
+        content
+        for turn in state.get("turns", [])
+        for content in turn.get("messages", [])
+    ] + [user_content]
 
     # generate streaming response
     response = await client.aio.models.generate_content(
@@ -155,3 +150,15 @@ async def ainvoke(
         update=schemas.GraphSession(current_turn=current_turn),
         goto=next_node,
     )
+
+
+def load_user_content(current_turn: schemas.Turn) -> genai_types.Content:
+    user_input = current_turn.get("user_input")
+    assert user_input is not None, "user input must be set"
+
+    user_content = genai_types.Content(
+        role="user",
+        parts=[genai_types.Part.from_text(text=user_input)],
+    )
+
+    return user_content

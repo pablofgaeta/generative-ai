@@ -2,6 +2,10 @@
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
 
+# disable duplicate code since chat handlers for each agent may be very similar but not
+# exactly the same
+# pylint: disable=duplicate-code
+
 from typing import Generator
 
 from langgraph.pregel import remote
@@ -41,9 +45,7 @@ def chat_handler(
             classification_emoji = "❌" if is_blocked else "✅"
             reason = chunk["guardrail_classification"]["reason"]
 
-            text = (
-                f"Guardrail classification: {classification_emoji}\n\nReason: {reason}"
-            )
+            text = f"Guardrail classification: {classification_emoji}\n\nReason: {reason}"
             current_source = "guardrail_classification"
 
         elif "text" in chunk:

@@ -7,7 +7,7 @@
 
 import logging
 
-from concierge.agents.function_calling import schemas, utils, tools
+from concierge.agents.function_calling import schemas, tools, utils
 from google import genai
 from google.genai import types as genai_types
 from langchain_core.runnables import config as lc_config

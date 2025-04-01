@@ -2,7 +2,7 @@
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
 
-from typing import NamedTuple, Callable
+from typing import Callable, NamedTuple
 
 from concierge.agents.function_calling import schemas
 from concierge.agents.function_calling.tools import (

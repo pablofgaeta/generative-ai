@@ -2,6 +2,7 @@
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
 
+from typing import Generator
 from concierge_ui import auth, demo_page
 from concierge_ui import remote_settings as settings
 from langgraph.pregel import remote
@@ -15,7 +16,7 @@ graph = remote.RemoteGraph(
 )
 
 
-def chat_handler(message: str, thread_id: str):
+def chat_handler(message: str, thread_id: str) -> Generator[str, None, None]:
     """
     Handles chat interactions for a basic Gemini chat agent by streaming responses from a remote LangGraph.
 

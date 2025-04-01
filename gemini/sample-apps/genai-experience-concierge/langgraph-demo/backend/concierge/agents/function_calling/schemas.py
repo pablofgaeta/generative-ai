@@ -7,7 +7,7 @@ import datetime
 from typing import Literal, Optional, TypedDict
 import uuid
 
-from google.genai import types as genai_types  # type: ignore[import-untyped]
+from google.genai import types as genai_types
 import pydantic
 
 # Agent config settings

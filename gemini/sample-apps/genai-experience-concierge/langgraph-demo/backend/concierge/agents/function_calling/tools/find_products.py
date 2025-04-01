@@ -2,11 +2,11 @@
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
 
-from typing import Optional
+from typing import Callable, Optional
 
 from concierge.agents.function_calling import schemas
 from google.cloud import bigquery
-from google.genai import types as genai_types  # type: ignore[import-untyped]
+from google.genai import types as genai_types
 
 MAX_PRODUCT_RESULTS = 10
 
@@ -59,7 +59,10 @@ def generate_find_products_handler(
     cymbal_products_table_uri: str,
     cymbal_inventory_table_uri: str,
     cymbal_embedding_model_uri: str,
-):
+) -> Callable[
+    [int, str | None, list[str] | None, int | None, int | None],
+    schemas.ProductSearchResult,
+]:
     """
     Generates a function handler for finding products based on search queries and filters.
 
@@ -92,7 +95,7 @@ def generate_find_products_handler(
         store_ids: list[str] | None = None,
         min_price: int | None = None,
         max_price: int | None = None,
-    ):
+    ) -> schemas.ProductSearchResult:
         """Search for products with optional semantic search queries and filters.
 
         Args:
@@ -106,7 +109,12 @@ def generate_find_products_handler(
             ProductSearchResult: The return value. Object including top matched products and/or an error message.
         """
 
-        nonlocal project, cymbal_dataset_location, cymbal_products_table_uri, cymbal_inventory_table_uri, cymbal_embedding_model_uri
+        nonlocal \
+            project, \
+            cymbal_dataset_location, \
+            cymbal_products_table_uri, \
+            cymbal_inventory_table_uri, \
+            cymbal_embedding_model_uri
 
         if max_results >= MAX_PRODUCT_RESULTS:
             print(
@@ -160,7 +168,7 @@ def build_query_without_vector_search(
     store_ids: Optional[list[str]] = None,
     min_price: Optional[int] = None,
     max_price: Optional[int] = None,
-):
+) -> tuple[str, bigquery.QueryJobConfig]:
     """
     Builds a BigQuery SQL query for product search without semantic vector search.
 
@@ -276,7 +284,7 @@ def build_query_with_vector_search(
     store_ids: Optional[list[str]] = None,
     min_price: Optional[int] = None,
     max_price: Optional[int] = None,
-):
+) -> tuple[str, bigquery.QueryJobConfig]:
     """
     Builds a BigQuery SQL query for product search using semantic vector search.
 

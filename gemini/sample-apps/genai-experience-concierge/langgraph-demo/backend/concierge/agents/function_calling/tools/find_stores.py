@@ -2,12 +2,12 @@
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
 
-from typing import Optional
+from typing import Callable, Optional
 
 from concierge.agents.function_calling import schemas
 from google.cloud import bigquery
-from google.genai import types as genai_types  # type: ignore[import-untyped]
-from thefuzz import fuzz  # type: ignore[import-untyped]
+from google.genai import types as genai_types
+from thefuzz import fuzz
 
 MAX_STORE_RESULTS = 10
 STORE_NAME_SIMILARITY_THRESHOLD = 90
@@ -56,7 +56,9 @@ def generate_find_stores_handler(
     cymbal_inventory_table_uri: str,
     user_latitude: Optional[float] = None,
     user_longitude: Optional[float] = None,
-):
+) -> Callable[
+    [list[str] | None, int, int | None, str | None], schemas.StoreSearchResult
+]:
     """Generates a handler function for finding stores based on various criteria.
 
     This function creates a closure that encapsulates user location information (latitude and longitude)
@@ -88,7 +90,7 @@ def generate_find_stores_handler(
         # Note: google-genai doesn't properly handle floats, so we just set this as an integer
         radius_km: int | None = None,
         store_name: str | None = None,
-    ):
+    ) -> schemas.StoreSearchResult:
         """Search for stores nearby, by name, or offering certain products.
 
         Args:
@@ -101,7 +103,13 @@ def generate_find_stores_handler(
             StoreSearchResult: The return value. Object including top matched stores and/or an error message.
         """
 
-        nonlocal project, cymbal_dataset_location, cymbal_stores_table_uri, cymbal_inventory_table_uri, user_latitude, user_longitude
+        nonlocal \
+            project, \
+            cymbal_dataset_location, \
+            cymbal_stores_table_uri, \
+            cymbal_inventory_table_uri, \
+            user_latitude, \
+            user_longitude
 
         product_ids = product_ids or []
 
@@ -210,9 +218,7 @@ def generate_find_stores_handler(
                 or fuzz.partial_ratio(row["name"], store_name)
                 >= STORE_NAME_SIMILARITY_THRESHOLD
             )
-        ][
-            :max_results
-        ]  # filter max results
+        ][:max_results]  # filter max results
 
         return schemas.StoreSearchResult(stores=stores, query=query)
 

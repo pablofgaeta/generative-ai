@@ -141,7 +141,7 @@ class LangGraphAgent(Protocol):
         checkpoint: Optional[schema.Checkpoint] = None,
         interrupt_before: Optional[Union[schema.All, Sequence[str]]] = None,
         interrupt_after: Optional[Union[schema.All, Sequence[str]]] = None,
-    ) -> AsyncIterator[tuple[Any, Any]]:
+    ) -> AsyncIterator[tuple[str, Any]]:
         """
         Streams the output of the agent's execution.
 

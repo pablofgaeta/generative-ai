@@ -16,7 +16,7 @@ from langgraph.graph import StateGraph
 FINAL_NODE = schemas.POST_PROCESS_NODE_NAME
 
 
-def load_graph():
+def load_graph() -> StateGraph:
     """
     Creates and configures a LangGraph representing an agent with a semantic router.
 

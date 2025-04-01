@@ -3,6 +3,7 @@
 # agreement with Google.
 
 import json
+from typing import Generator
 
 from concierge_ui import auth, demo_page
 from concierge_ui import remote_settings as settings
@@ -17,7 +18,7 @@ graph = remote.RemoteGraph(
 )
 
 
-def chat_handler(message: str, thread_id: str):
+def chat_handler(message: str, thread_id: str) -> Generator[str, None, None]:
     """
     Handles chat interactions for a function calling agent by streaming responses from a remote LangGraph.
 

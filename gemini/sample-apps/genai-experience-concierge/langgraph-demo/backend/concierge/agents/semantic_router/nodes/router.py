@@ -6,8 +6,8 @@ import logging
 from typing import Literal
 
 from concierge.agents.semantic_router import schemas
-from google import genai  # type: ignore[import-untyped]
-from google.genai import types as genai_types  # type: ignore[import-untyped]
+from google import genai
+from google.genai import types as genai_types
 from langchain_core.runnables import config as lc_config
 from langgraph import types as lg_types
 from langgraph.config import get_stream_writer

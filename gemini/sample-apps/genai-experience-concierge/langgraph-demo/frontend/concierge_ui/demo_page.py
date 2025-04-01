@@ -36,7 +36,7 @@ def build_demo_page(
     description: str,
     chat_handler: ChatHandler,
     config: settings.RemoteAgentConfig,
-):
+) -> None:
     """
     Builds a demo page for a chat application using Streamlit.
 
@@ -95,6 +95,4 @@ def build_demo_page(
             )
 
         # Add assistant response to chat history
-        st.session_state[messages_key].append(
-            {"role": "assistant", "content": response}
-        )
+        st.session_state[messages_key].append({"role": "assistant", "content": response})

@@ -11,7 +11,7 @@ from langgraph.graph import StateGraph
 FINAL_NODE = schemas.POST_PROCESS_NODE_NAME
 
 
-def load_graph():
+def load_graph() -> StateGraph:
     """
     Loads and configures the LangGraph state graph for the function calling agent.
 

@@ -8,7 +8,7 @@ import enum
 from typing import Literal, TypedDict
 import uuid
 
-from google.genai import types as genai_types  # type: ignore[import-untyped]
+from google.genai import types as genai_types
 import pydantic
 
 # Agent config settings

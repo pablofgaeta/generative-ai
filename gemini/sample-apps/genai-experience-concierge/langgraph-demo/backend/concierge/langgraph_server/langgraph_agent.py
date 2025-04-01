@@ -67,12 +67,14 @@ class LangGraphAgent:
             # fall back to jsonplus serializer in case a checkpointer is not available
             self.serde = jsonplus.JsonPlusSerializer()
 
-    async def setup(self):
+    async def setup(self) -> None:
         """Sets up the checkpointer if it exists."""
         if self.checkpointer:
             await checkpoint_saver.setup_checkpointer(checkpointer=self.checkpointer)
 
-    def get_graph(self, *, xray: Union[int, bool] = False):
+    def get_graph(
+        self, *, xray: Union[int, bool] = False
+    ) -> dict[str, list[dict[str, Any]]]:
         """
         Retrieves the graph structure of the agent.
 
@@ -224,7 +226,7 @@ class LangGraphAgent:
         checkpoint: Optional[schema.Checkpoint] = None,
         interrupt_before: Optional[Union[schema.All, Sequence[str]]] = None,
         interrupt_after: Optional[Union[schema.All, Sequence[str]]] = None,
-    ) -> AsyncGenerator[Any, tuple[str, Any]]:
+    ) -> AsyncGenerator[tuple[str, Any]]:
         """
         Streams the output of the agent's execution.
 
@@ -285,7 +287,7 @@ class LangGraphAgent:
                 yield (chunk_stream_mode, chunk)
 
         async for chunk in stream_response:
-            yield (stream_mode, chunk)
+            yield (cast(str, stream_mode), chunk)
 
 
 def _checkpoint_from_runnable_config(

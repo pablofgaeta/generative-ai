@@ -56,7 +56,7 @@ def apply(
     random_project_suffix: bool = False,
     terraform_dir: str = str(defaults.TERRAFORM_DIR),
     auto_approve: bool = False,
-):
+) -> None:
     """
     Apply Terraform configurations to create Google Cloud resources.
 
@@ -133,8 +133,6 @@ def outputs(terraform_dir: str = str(defaults.TERRAFORM_DIR)) -> dict:
     )
 
     terraform_state = json.loads(terraform_state_process.stdout)
-    tf_outputs = terraform_state["values"]["outputs"]
-
-    assert isinstance(tf_outputs, dict)
+    tf_outputs = dict(terraform_state["values"]["outputs"])
 
     return tf_outputs

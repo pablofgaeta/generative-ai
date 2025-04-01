@@ -6,8 +6,8 @@ import logging
 from typing import AsyncIterator
 
 from concierge.agents.semantic_router import schemas
-from google import genai  # type: ignore[import-untyped]
-from google.genai import types as genai_types  # type: ignore[import-untyped]
+from google import genai
+from google.genai import types as genai_types
 from langchain_core.runnables import config as lc_config
 from langgraph import types as lg_types
 from langgraph.config import get_stream_writer
@@ -68,17 +68,17 @@ async def ainvoke(
 
     try:
         # generate streaming response
-        response: AsyncIterator[genai_types.GenerateContentResponse] = (
-            await client.aio.models.generate_content_stream(
-                model=agent_config.chat_model_name,
-                contents=contents,
-                config=genai_types.GenerateContentConfig(
-                    candidate_count=1,
-                    temperature=0.2,
-                    seed=0,
-                    system_instruction=RETAIL_SYSTEM_PROMPT,
-                ),
-            )
+        response: AsyncIterator[
+            genai_types.GenerateContentResponse
+        ] = await client.aio.models.generate_content_stream(
+            model=agent_config.chat_model_name,
+            contents=contents,
+            config=genai_types.GenerateContentConfig(
+                candidate_count=1,
+                temperature=0.2,
+                seed=0,
+                system_instruction=RETAIL_SYSTEM_PROMPT,
+            ),
         )
 
         # stream response text to custom stream writer

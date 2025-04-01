@@ -105,7 +105,7 @@ def chat_handler(message: str, thread_id: str):
 
 
 demo_page.build_demo_page(
-    id="function-calling",
+    demo_id="function-calling",
     title="Function Calling Agent",
     page_icon="📞",
     description="""

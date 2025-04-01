@@ -67,7 +67,7 @@ def chat_handler(message: str, thread_id: str):
 
 
 demo_page.build_demo_page(
-    id="semantic-router",
+    demo_id="semantic-router",
     title="Semantic Router",
     page_icon="↗️",
     description="""

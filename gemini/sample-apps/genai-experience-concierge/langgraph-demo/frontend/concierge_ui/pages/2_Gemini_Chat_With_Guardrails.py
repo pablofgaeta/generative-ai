@@ -45,9 +45,7 @@ def chat_handler(message: str, thread_id: str):
             classification_emoji = "❌" if is_blocked else "✅"
             reason = chunk["guardrail_classification"]["reason"]
 
-            text = (
-                f"Guardrail classification: {classification_emoji}\n\nReason: {reason}"
-            )
+            text = f"Guardrail classification: {classification_emoji}\n\nReason: {reason}"
             current_source = "guardrail_classification"
 
         elif "text" in chunk:
@@ -70,7 +68,7 @@ def chat_handler(message: str, thread_id: str):
 
 
 demo_page.build_demo_page(
-    id="gemini-chat-with-guardrails",
+    demo_id="gemini-chat-with-guardrails",
     title="Gemini Chat With Guardrails",
     page_icon="🛡️",
     description="""

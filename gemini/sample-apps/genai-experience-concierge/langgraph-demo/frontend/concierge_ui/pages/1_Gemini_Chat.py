@@ -61,7 +61,7 @@ def chat_handler(message: str, thread_id: str):
 
 
 demo_page.build_demo_page(
-    id="gemini-chat",
+    demo_id="gemini-chat",
     title="Gemini Chat",
     page_icon="⭐",
     description="""

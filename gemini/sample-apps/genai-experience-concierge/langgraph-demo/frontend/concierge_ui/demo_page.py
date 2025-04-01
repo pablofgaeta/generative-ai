@@ -95,4 +95,6 @@ def build_demo_page(
             )
 
         # Add assistant response to chat history
-        st.session_state[messages_key].append({"role": "assistant", "content": response})
+        st.session_state[messages_key].append(
+            {"role": "assistant", "content": response}
+        )

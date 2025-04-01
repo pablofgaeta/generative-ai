@@ -48,12 +48,12 @@ async def generate_content_stream(
         logger.warning("Maximum depth reached, stopping generation.")
         return
 
-    response: AsyncIterator[
-        genai_types.GenerateContentResponse
-    ] = await client.aio.models.generate_content_stream(
-        model=model,
-        contents=contents,
-        config=config,
+    response: AsyncIterator[genai_types.GenerateContentResponse] = (
+        await client.aio.models.generate_content_stream(
+            model=model,
+            contents=contents,
+            config=config,
+        )
     )
 
     # iterate over chunk in main request

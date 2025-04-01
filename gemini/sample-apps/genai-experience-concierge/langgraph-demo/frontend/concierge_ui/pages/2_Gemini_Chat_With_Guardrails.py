@@ -3,6 +3,7 @@
 # agreement with Google.
 
 from typing import Generator
+
 from concierge_ui import auth, demo_page
 from concierge_ui import remote_settings as settings
 from langgraph.pregel import remote
@@ -46,7 +47,9 @@ def chat_handler(message: str, thread_id: str) -> Generator[str, None, None]:
             classification_emoji = "❌" if is_blocked else "✅"
             reason = chunk["guardrail_classification"]["reason"]
 
-            text = f"Guardrail classification: {classification_emoji}\n\nReason: {reason}"
+            text = (
+                f"Guardrail classification: {classification_emoji}\n\nReason: {reason}"
+            )
             current_source = "guardrail_classification"
 
         elif "text" in chunk:

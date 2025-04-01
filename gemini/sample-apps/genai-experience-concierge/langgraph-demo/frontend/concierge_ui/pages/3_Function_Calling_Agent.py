@@ -4,7 +4,8 @@
 
 import json
 
-from concierge_ui import auth, demo_page, remote_settings as settings
+from concierge_ui import auth, demo_page
+from concierge_ui import remote_settings as settings
 from langgraph.pregel import remote
 
 config = settings.RemoteAgentConfigs().function_calling

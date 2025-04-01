@@ -3,6 +3,9 @@
 # agreement with Google.
 """LangGraph graph for an agent with a semantic router."""
 
+# disable duplicate code to make it easier for copying a single agent folder
+# pylint: disable=duplicate-code
+
 from concierge.agents.semantic_router import schemas
 from concierge.agents.semantic_router.nodes import (
     customer_service_assistant,

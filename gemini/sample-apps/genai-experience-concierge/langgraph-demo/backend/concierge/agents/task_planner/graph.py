@@ -3,6 +3,9 @@
 # agreement with Google.
 """LangGraph agent for a task planner assistant."""
 
+# disable duplicate code to make it easier for copying a single agent folder
+# pylint: disable=duplicate-code
+
 from concierge.agents.task_planner import schemas
 from concierge.agents.task_planner.nodes import (
     executor,

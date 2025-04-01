@@ -3,7 +3,8 @@
 # agreement with Google.
 """Schemas for the task planner agent."""
 
-# pylint: disable=line-too-long
+# disable duplicate code to make it easier for copying a single agent folder
+# pylint: disable=duplicate-code, line-too-long
 
 import datetime
 from typing import Literal, TypedDict

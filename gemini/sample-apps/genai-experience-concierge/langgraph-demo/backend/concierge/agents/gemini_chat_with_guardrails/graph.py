@@ -3,6 +3,9 @@
 # agreement with Google.
 """LangGraph agent for a chat assistant with guardrail classification."""
 
+# disable duplicate code to make it easier for copying a single agent folder
+# pylint: disable=duplicate-code
+
 from concierge.agents.gemini_chat_with_guardrails import schemas
 from concierge.agents.gemini_chat_with_guardrails.nodes import (
     chat,

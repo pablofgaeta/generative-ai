@@ -3,6 +3,9 @@
 # agreement with Google.
 """LangGraph agent for a chat assistant."""
 
+# disable duplicate code to make it easier for copying a single agent folder
+# pylint: disable=duplicate-code
+
 from concierge.agents.gemini_chat import schemas
 from concierge.agents.gemini_chat.nodes import chat, post_process
 from langchain_core.runnables import config

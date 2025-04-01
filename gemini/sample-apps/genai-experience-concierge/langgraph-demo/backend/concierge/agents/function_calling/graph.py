@@ -3,6 +3,9 @@
 # agreement with Google.
 """LangGraph agent for a function calling assistant."""
 
+# disable duplicate code to make it easier for copying a single agent folder
+# pylint: disable=duplicate-code
+
 from concierge.agents.function_calling import schemas
 from concierge.agents.function_calling.nodes import chat, post_process
 from langchain_core.runnables import config

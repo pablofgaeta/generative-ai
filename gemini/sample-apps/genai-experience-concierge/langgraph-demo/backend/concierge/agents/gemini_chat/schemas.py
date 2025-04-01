@@ -3,6 +3,9 @@
 # agreement with Google.
 """Schemas for the chat agent."""
 
+# disable duplicate code to make it easier for copying a single agent folder
+# pylint: disable=duplicate-code
+
 import datetime
 from typing import Literal, TypedDict
 import uuid

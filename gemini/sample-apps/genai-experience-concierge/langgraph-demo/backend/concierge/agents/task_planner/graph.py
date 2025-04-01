@@ -1,6 +1,10 @@
 # Copyright 2025 Google. This software is provided as-is, without warranty or
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
+"""LangGraph agent for a task planner assistant."""
+
+from langchain_core.runnables import config
+from langgraph.graph import StateGraph
 
 from concierge.agents.task_planner import schemas
 from concierge.agents.task_planner.nodes import (
@@ -9,8 +13,6 @@ from concierge.agents.task_planner.nodes import (
     post_process,
     reflector,
 )
-from langchain_core.runnables import config
-from langgraph.graph import StateGraph
 
 FINAL_NODE = schemas.POST_PROCESS_NODE_NAME
 

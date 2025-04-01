@@ -1,6 +1,10 @@
 # Copyright 2025 Google. This software is provided as-is, without warranty or
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
+"""LangGraph graph for an agent with a semantic router."""
+
+from langchain_core.runnables import config
+from langgraph.graph import StateGraph
 
 from concierge.agents.semantic_router import schemas
 from concierge.agents.semantic_router.nodes import (
@@ -9,8 +13,6 @@ from concierge.agents.semantic_router.nodes import (
     retail_assistant,
     router,
 )
-from langchain_core.runnables import config
-from langgraph.graph import StateGraph
 
 FINAL_NODE = schemas.POST_PROCESS_NODE_NAME
 

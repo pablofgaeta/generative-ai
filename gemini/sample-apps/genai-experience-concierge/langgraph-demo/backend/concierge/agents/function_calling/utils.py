@@ -1,15 +1,16 @@
 # Copyright 2025 Google. This software is provided as-is, without warranty or
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
+"""Utilities for streaming text and function calls/responses from the Gen AI SDK."""
 
 import asyncio
 import inspect
 import logging
 from typing import Any, AsyncGenerator, AsyncIterator, Awaitable, Callable, Mapping
 
+import pydantic
 from google import genai  # type: ignore[import-untyped]
 from google.genai import types as genai_types  # type: ignore[import-untyped]
-import pydantic
 
 logger = logging.getLogger(__name__)
 
@@ -39,7 +40,7 @@ async def generate_content_stream(
 
     Yields:
         Content objects representing the generated content, including text and function call responses.
-    """
+    """  # pylint: disable=line-too-long
 
     fn_map = fn_map or {}
 
@@ -47,12 +48,12 @@ async def generate_content_stream(
         logger.warning("Maximum depth reached, stopping generation.")
         return
 
-    response: AsyncIterator[genai_types.GenerateContentResponse] = (
-        await client.aio.models.generate_content_stream(
-            model=model,
-            contents=contents,
-            config=config,
-        )
+    response: AsyncIterator[
+        genai_types.GenerateContentResponse
+    ] = await client.aio.models.generate_content_stream(
+        model=model,
+        contents=contents,
+        config=config,
     )
 
     # iterate over chunk in main request
@@ -65,7 +66,9 @@ async def generate_content_stream(
         content = chunk.candidates[0].content
         yield content
 
-        # if any function calls, execute each in parallel, then call generate after responses are gathered
+        # if any function calls:
+        # - execute each in parallel
+        # - then call generate after responses are gathered
         if chunk.function_calls:
             # create asyncio tasks to execute each function call
             tasks = list[asyncio.Task[dict[str, Any]]]()
@@ -121,7 +124,8 @@ async def run_function_async(
     """
     Runs a function asynchronously and wraps the results for google-genai FunctionResponse.
 
-    This function executes a given function asynchronously, handling both synchronous and asynchronous functions. Note: Sync functions are made asynchronous by running in the default threadpool executor so any sync functions should be thread-safe.
+    This function executes a given function asynchronously, handling both synchronous and asynchronous functions.
+    Note: Sync functions are made asynchronous by running in the default threadpool executor so any sync functions should be thread-safe.
 
     Args:
         function: The function to execute.
@@ -129,7 +133,7 @@ async def run_function_async(
 
     Returns:
         A dictionary containing the function's result or an error message.
-    """
+    """  # pylint: disable=line-too-long
 
     try:
         if inspect.iscoroutinefunction(function):
@@ -144,5 +148,5 @@ async def run_function_async(
 
         return {"result": fn_result.model_dump(mode="json")}
 
-    except Exception as e:
+    except Exception as e:  # pylint: disable=broad-exception-caught
         return {"error": str(e)}

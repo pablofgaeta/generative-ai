@@ -1,6 +1,10 @@
 # Copyright 2025 Google. This software is provided as-is, without warranty or
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
+"""LangGraph agent for a chat assistant with guardrail classification."""
+
+from langchain_core.runnables import config
+from langgraph.graph import StateGraph
 
 from concierge.agents.gemini_chat_with_guardrails import schemas
 from concierge.agents.gemini_chat_with_guardrails.nodes import (
@@ -8,8 +12,6 @@ from concierge.agents.gemini_chat_with_guardrails.nodes import (
     guardrails,
     post_process,
 )
-from langchain_core.runnables import config
-from langgraph.graph import StateGraph
 
 FINAL_NODE = schemas.POST_PROCESS_NODE_NAME
 

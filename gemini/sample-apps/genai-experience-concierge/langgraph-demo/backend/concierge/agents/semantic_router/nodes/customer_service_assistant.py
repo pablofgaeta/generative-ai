@@ -20,7 +20,7 @@ CUSTOMER_SERVICE_SYSTEM_PROMPT = "Answer customer service questions about the Cy
 async def ainvoke(
     state: schemas.GraphSession,
     config: lc_config.RunnableConfig,
-) -> lg_types.Command[schemas.POST_PROCESS_NODE_TARGET_LITERAL]:
+) -> lg_types.Command[schemas.PostProcessNodeTargetLiteral]:
     """
     Asynchronously invokes the customer service chat node to generate a response using a Gemini model.
 
@@ -68,17 +68,17 @@ async def ainvoke(
 
     try:
         # generate streaming response
-        response: AsyncIterator[genai_types.GenerateContentResponse] = (
-            await client.aio.models.generate_content_stream(
-                model=agent_config.chat_model_name,
-                contents=contents,
-                config=genai_types.GenerateContentConfig(
-                    candidate_count=1,
-                    temperature=0.2,
-                    seed=0,
-                    system_instruction=CUSTOMER_SERVICE_SYSTEM_PROMPT,
-                ),
-            )
+        response: AsyncIterator[
+            genai_types.GenerateContentResponse
+        ] = await client.aio.models.generate_content_stream(
+            model=agent_config.chat_model_name,
+            contents=contents,
+            config=genai_types.GenerateContentConfig(
+                candidate_count=1,
+                temperature=0.2,
+                seed=0,
+                system_instruction=CUSTOMER_SERVICE_SYSTEM_PROMPT,
+            ),
         )
 
         # stream response text to custom stream writer

@@ -1,8 +1,11 @@
 # Copyright 2025 Google. This software is provided as-is, without warranty or
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
+"""FastAPI server for hosting LangGraph agents."""
 
 import contextlib
+
+import fastapi
 
 from concierge import agent_settings as settings
 from concierge.agents import (
@@ -13,7 +16,6 @@ from concierge.agents import (
     task_planner,
 )
 from concierge.langgraph_server import fastapi_app, langgraph_agent
-import fastapi
 
 # Build compiled LangGraph agents with optional checkpointer based on config
 
@@ -51,7 +53,8 @@ task_planner_agent = langgraph_agent.LangGraphAgent(
 
 
 @contextlib.asynccontextmanager
-async def lifespan(app: fastapi.FastAPI):
+async def lifespan(_app: fastapi.FastAPI):
+    """Setup each agent during server startup."""
     await gemini_agent.setup()
     await guardrail_agent.setup()
     await function_calling_agent.setup()
@@ -66,11 +69,13 @@ app = fastapi.FastAPI(lifespan=lifespan)
 
 @app.get("/")
 async def root():
+    """Root endpoint."""
     return 200
 
 
 @app.get("/health")
 async def health():
+    """Health endpoint."""
     return 200
 
 

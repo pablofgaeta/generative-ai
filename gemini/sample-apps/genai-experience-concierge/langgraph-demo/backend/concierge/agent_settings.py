@@ -1,6 +1,10 @@
 # Copyright 2025 Google. This software is provided as-is, without warranty or
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
+"""Runtime settings for the LangGraph agent server."""
+
+import pydantic
+import pydantic_settings
 
 from concierge.agents import (
     function_calling,
@@ -10,11 +14,11 @@ from concierge.agents import (
     task_planner,
 )
 from concierge.langgraph_server import schemas
-import pydantic
-import pydantic_settings
 
 
 class AgentServerConfig(pydantic_settings.BaseSettings):
+    """Runtime settings for the LangGraph agent server."""
+
     checkpointer: schemas.CheckpointerConfig = pydantic.Field(
         default_factory=schemas.MemoryBackendConfig
     )

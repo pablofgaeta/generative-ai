@@ -61,22 +61,22 @@ async def ainvoke(
     new_contents = [user_content.model_copy(deep=True)]
     try:
         # generate streaming response
-        response: AsyncIterator[genai_types.GenerateContentResponse] = (
-            await client.aio.models.generate_content_stream(
-                model=agent_config.chat_model_name,
-                contents=[
-                    content
-                    for turn in state.get("turns", [])
-                    for content in turn.get("messages", [])
-                ]
-                + [user_content],
-                config=genai_types.GenerateContentConfig(
-                    candidate_count=1,
-                    temperature=0.2,
-                    seed=0,
-                    system_instruction=RETAIL_SYSTEM_PROMPT,
-                ),
-            )
+        response: AsyncIterator[
+            genai_types.GenerateContentResponse
+        ] = await client.aio.models.generate_content_stream(
+            model=agent_config.chat_model_name,
+            contents=[
+                content
+                for turn in state.get("turns", [])
+                for content in turn.get("messages", [])
+            ]
+            + [user_content],
+            config=genai_types.GenerateContentConfig(
+                candidate_count=1,
+                temperature=0.2,
+                seed=0,
+                system_instruction=RETAIL_SYSTEM_PROMPT,
+            ),
         )
 
         # stream response text to custom stream writer
@@ -111,6 +111,8 @@ async def ainvoke(
 
 
 def load_user_content(current_turn: schemas.Turn) -> genai_types.Content:
+    """Load user input from current turn into a Content object."""
+
     user_input = current_turn.get("user_input")
     assert user_input is not None, "user input must be set"
 

@@ -14,6 +14,8 @@ from google.genai import types as genai_types
 
 
 class FunctionSpec(NamedTuple):
+    """A named tuple representing an LLM-callable function specification."""
+
     fd: genai_types.FunctionDeclaration
     callable: Callable
 
@@ -27,13 +29,23 @@ def load_function_specs(
     user_latitude = turn.get("user_latitude")
     user_longitude = turn.get("user_longitude")
 
+    assert not (
+        (user_latitude is None) ^ (user_longitude is None)
+    ), "Latitude and longitude must both be defined or both null"
+
+    user_coordinate = None
+    if user_latitude is not None and user_longitude is not None:
+        user_coordinate = schemas.Coordinate(
+            latitude=user_latitude,
+            longitude=user_longitude,
+        )
+
     find_stores_handler = find_stores.generate_find_stores_handler(
         project=agent_config.project,
         cymbal_dataset_location=agent_config.cymbal_dataset_location,
         cymbal_stores_table_uri=agent_config.cymbal_stores_table_uri,
         cymbal_inventory_table_uri=agent_config.cymbal_inventory_table_uri,
-        user_latitude=user_latitude,
-        user_longitude=user_longitude,
+        user_coordinate=user_coordinate,
     )
     find_stores_fd = find_stores.find_stores_fd
     assert (

@@ -148,6 +148,8 @@ async def ainvoke(
 
 
 def load_user_content(current_turn: schemas.Turn) -> genai_types.Content:
+    """Load user input from current turn into a Content object."""
+
     user_input = current_turn.get("user_input")
     assert user_input is not None, "user input must be set"
 

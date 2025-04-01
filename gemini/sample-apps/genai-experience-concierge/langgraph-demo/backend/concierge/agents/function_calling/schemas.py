@@ -56,6 +56,15 @@ EndNodeTargetLiteral = Literal["__end__"]
 # DB Models
 
 
+class Coordinate(pydantic.BaseModel):
+    """Represents a coordinate with its latitude and longitude."""
+
+    latitude: float
+    """Latitude of the coordinate."""
+    longitude: float
+    """Longitude of the coordinate."""
+
+
 class Store(pydantic.BaseModel):
     """Represents a store with its details."""
 

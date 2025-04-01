@@ -29,5 +29,9 @@ dev = [
     "pylint>=3.3.6",
 ]
 
+# leave mypy checks to demo sub-projects
+[tool.mypy]
+packages = ["concierge_ui"]
+
 [tool.pylint.messages_control]
 disable = ["too-many-arguments", "too-many-positional-arguments", "invalid-name"]

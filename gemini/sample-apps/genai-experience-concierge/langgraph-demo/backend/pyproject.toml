@@ -40,9 +40,5 @@ dev = [
 [tool.mypy]
 packages = ["concierge"]
 
-# leave pylint checks to demo sub-projects
-[tool.pylint.main]
-source-roots = ["concierge"]
-
 [tool.pylint.messages_control]
 disable = ["too-many-arguments", "too-many-positional-arguments", "duplicate-code"]

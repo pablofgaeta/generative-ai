@@ -44,7 +44,7 @@ async def generate_content_stream(
     fn_map = fn_map or {}
 
     if max_recursion_depth < 0:
-        print("Maximum depth reached, stopping generation.")
+        logger.warning("Maximum depth reached, stopping generation.")
         return
 
     response: AsyncIterator[
@@ -58,7 +58,7 @@ async def generate_content_stream(
     # iterate over chunk in main request
     async for chunk in response:
         if chunk.candidates is None or chunk.candidates[0].content is None:
-            print("no candidates or content, skipping chunk.")
+            logger.warning("no candidates or content, skipping chunk.")
             continue
 
         # yield current chunk content (assume only one candidate)
@@ -71,7 +71,7 @@ async def generate_content_stream(
             tasks = list[asyncio.Task[dict[str, Any]]]()
             for function_call in chunk.function_calls:
                 if function_call.name is None:
-                    print("skipping function call without name")
+                    logger.warning("skipping function call without name")
                     continue
 
                 if function_call.name not in fn_map:

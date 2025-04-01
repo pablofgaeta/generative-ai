@@ -2,6 +2,9 @@
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
 
+# disable duplicate code to make it easier for copying a single agent folder
+# pylint: disable=duplicate-code
+
 import logging
 from typing import AsyncIterator
 
@@ -68,17 +71,17 @@ async def ainvoke(
 
     try:
         # generate streaming response
-        response: AsyncIterator[genai_types.GenerateContentResponse] = (
-            await client.aio.models.generate_content_stream(
-                model=agent_config.chat_model_name,
-                contents=contents,
-                config=genai_types.GenerateContentConfig(
-                    candidate_count=1,
-                    temperature=0.2,
-                    seed=0,
-                    system_instruction=CUSTOMER_SERVICE_SYSTEM_PROMPT,
-                ),
-            )
+        response: AsyncIterator[
+            genai_types.GenerateContentResponse
+        ] = await client.aio.models.generate_content_stream(
+            model=agent_config.chat_model_name,
+            contents=contents,
+            config=genai_types.GenerateContentConfig(
+                candidate_count=1,
+                temperature=0.2,
+                seed=0,
+                system_instruction=CUSTOMER_SERVICE_SYSTEM_PROMPT,
+            ),
         )
 
         # stream response text to custom stream writer

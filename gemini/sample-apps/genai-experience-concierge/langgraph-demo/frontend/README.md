@@ -33,7 +33,7 @@ By default, the Streamlit app will point to `http://localhost:3000` as the base 
 To start the frontend server, navigate to `langgraph-demo/frontend` and run:
 
 ```bash
-uv run --frozen streamlit run concierge_ui/Home.py \
+uv run --frozen streamlit run concierge_ui/server.py \
   --server.port 8080 \
   --server.runOnSave true
 ```

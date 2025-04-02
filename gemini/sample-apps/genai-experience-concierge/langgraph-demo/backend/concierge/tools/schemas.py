@@ -5,8 +5,8 @@
 
 from typing import Optional
 
-import pydantic
 from concierge import schemas as concierge_schemas
+import pydantic
 
 
 class Store(pydantic.BaseModel):

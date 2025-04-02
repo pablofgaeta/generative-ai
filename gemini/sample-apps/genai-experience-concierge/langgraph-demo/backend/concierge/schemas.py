@@ -3,7 +3,7 @@
 # agreement with Google.
 """Common schemas for the concierge demo."""
 
-from typing import Callable, Protocol, TypedDict, NamedTuple
+from typing import Callable, NamedTuple, Protocol, TypedDict
 
 from google.genai import types as genai_types
 import pydantic

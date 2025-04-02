@@ -4,8 +4,9 @@
 """Schemas for the task planner agent nodes."""
 
 from typing import TypedDict
-import pydantic
+
 from concierge import schemas
+import pydantic
 
 
 class Task(pydantic.BaseModel):

@@ -8,9 +8,9 @@ from typing import AsyncGenerator
 
 from concierge import settings
 from concierge.agents import (
+    function_calling,
     gemini,
     guardrails,
-    function_calling,
     semantic_router,
     task_planner,
 )

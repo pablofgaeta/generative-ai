@@ -6,17 +6,30 @@
 import asyncio
 import inspect
 import logging
-from typing import Any, AsyncGenerator, AsyncIterator, Awaitable, Callable, Mapping
+from typing import (
+    Any,
+    AsyncGenerator,
+    AsyncIterator,
+    Awaitable,
+    Callable,
+    Mapping,
+    ParamSpec,
+    TypeVar,
+)
 
+from concierge import schemas
+from google import genai
+from google.genai import errors as genai_errors
+from google.genai import types as genai_types
+from langgraph import graph
 import pydantic
 import requests
-from google import genai
-from google.genai import types as genai_types, errors as genai_errors
 from tenacity import retry, retry_if_exception, stop_after_attempt, wait_exponential
-from concierge import schemas
-from langgraph import graph
 
 logger = logging.getLogger(__name__)
+
+P = ParamSpec("P")
+T = TypeVar("T")
 
 
 def load_graph(
@@ -75,7 +88,7 @@ def is_retryable_error(exception: BaseException) -> bool:
     return False
 
 
-def default_retry[T, **P](func: Callable[P, T]) -> Callable[P, T]:
+def default_retry(func: Callable[P, T]) -> Callable[P, T]:
     """Defines a default retry strategy for Gemini invocation, with exponential backoff."""
 
     return retry(
@@ -120,12 +133,12 @@ async def generate_content_stream(
         logger.warning("Maximum depth reached, stopping generation.")
         return
 
-    response: AsyncIterator[
-        genai_types.GenerateContentResponse
-    ] = await client.aio.models.generate_content_stream(
-        model=model,
-        contents=contents,
-        config=config,
+    response: AsyncIterator[genai_types.GenerateContentResponse] = (
+        await client.aio.models.generate_content_stream(
+            model=model,
+            contents=contents,
+            config=config,
+        )
     )
 
     # iterate over chunk in main request

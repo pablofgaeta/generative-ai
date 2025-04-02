@@ -3,8 +3,8 @@
 # agreement with Google.
 
 from concierge import settings, utils
-from concierge.nodes import guardrails, chat, save_turn
 from concierge.langgraph_server import langgraph_agent
+from concierge.nodes import chat, guardrails, save_turn
 
 GUARDRAIL_SYSTEM_PROMPT = """
 Tasks:

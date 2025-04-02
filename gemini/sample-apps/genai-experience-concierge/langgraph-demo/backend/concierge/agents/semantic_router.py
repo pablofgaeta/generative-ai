@@ -5,8 +5,8 @@
 import enum
 
 from concierge import settings, utils
-from concierge.nodes import router, chat, save_turn
 from concierge.langgraph_server import langgraph_agent
+from concierge.nodes import chat, router, save_turn
 
 
 class RouterTarget(enum.Enum):

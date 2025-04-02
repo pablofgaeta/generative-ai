@@ -4,9 +4,7 @@
 """Chat response generation with optional support for streamed function calling."""
 
 import logging
-from typing import TypedDict, Literal
-
-import pydantic
+from typing import Literal, TypedDict
 
 from concierge import schemas, utils
 from google import genai
@@ -14,6 +12,7 @@ from google.genai import types as genai_types
 from langchain_core.runnables import config as lc_config
 from langgraph import types as lg_types
 from langgraph.config import get_stream_writer
+import pydantic
 
 logger = logging.getLogger(__name__)
 

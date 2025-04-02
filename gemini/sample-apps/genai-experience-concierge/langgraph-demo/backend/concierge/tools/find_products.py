@@ -110,12 +110,7 @@ def generate_find_products_handler(
             ProductSearchResult: The return value. Object including top matched products and/or an error message.
         """
 
-        nonlocal \
-            project, \
-            cymbal_dataset_location, \
-            cymbal_products_table_uri, \
-            cymbal_inventory_table_uri, \
-            cymbal_embedding_model_uri
+        nonlocal project, cymbal_dataset_location, cymbal_products_table_uri, cymbal_inventory_table_uri, cymbal_embedding_model_uri
 
         if max_results >= MAX_PRODUCT_RESULTS:
             print(
@@ -293,10 +288,7 @@ def generate_find_products_handler(
         Returns:
             A tuple containing the SQL query string and the BigQuery query job configuration.
         """
-        nonlocal \
-            cymbal_products_table_uri, \
-            cymbal_inventory_table_uri, \
-            cymbal_embedding_model_uri
+        nonlocal cymbal_products_table_uri, cymbal_inventory_table_uri, cymbal_embedding_model_uri
 
         where_conditions = list[str]()
         query_parameters = list[

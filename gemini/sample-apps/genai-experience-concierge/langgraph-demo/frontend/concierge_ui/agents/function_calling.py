@@ -94,7 +94,7 @@ def chat_handler(
             current_source = "error"
 
         else:
-            logger.warning("unhandled chunk case:", chunk)
+            logger.warning(f"unhandled chunk case: {chunk}")
 
         if last_source is not None and last_source != current_source:
             text = "\n\n---\n\n" + text

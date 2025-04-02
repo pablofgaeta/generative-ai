@@ -4,12 +4,12 @@
 
 ## Table of Contents
 
-| Section                                                   | Standalone Notebook                                        | Demo Source Code                                                                                       |
-| --------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| [Guardrail Classifier Agent](#guardrail-classifier-agent) | [guardrail-classifier.ipynb](./guardrail-classifier.ipynb) | [guardrails.py](../langgraph-demo/backend/concierge/agents/guardrails.py) |
-| [Semantic Router Agent](#semantic-router-agent)           | [semantic-router.ipynb](./semantic-router.ipynb)           | [semantic_router.py](../langgraph-demo/backend/concierge/agents/semantic_router.py)                         |
-| [Function Calling Agent](#function-calling-agent)         | [function-calling.ipynb](./function-calling.ipynb)         | [function_calling.py](../langgraph-demo/backend/concierge/agents/function_calling.py)                       |
-| [Task Planner](#task-planner)                             | [task-planner.ipynb](./task-planner.ipynb)                 | [task_planner.py](../langgraph-demo/backend/concierge/agents/task_planner.py)                               |
+| Section                                                   | Standalone Notebook                                        | Demo Source Code                                                                      |
+| --------------------------------------------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| [Guardrail Classifier Agent](#guardrail-classifier-agent) | [guardrail-classifier.ipynb](./guardrail-classifier.ipynb) | [guardrails.py](../langgraph-demo/backend/concierge/agents/guardrails.py)             |
+| [Semantic Router Agent](#semantic-router-agent)           | [semantic-router.ipynb](./semantic-router.ipynb)           | [semantic_router.py](../langgraph-demo/backend/concierge/agents/semantic_router.py)   |
+| [Function Calling Agent](#function-calling-agent)         | [function-calling.ipynb](./function-calling.ipynb)         | [function_calling.py](../langgraph-demo/backend/concierge/agents/function_calling.py) |
+| [Task Planner](#task-planner)                             | [task-planner.ipynb](./task-planner.ipynb)                 | [task_planner.py](../langgraph-demo/backend/concierge/agents/task_planner.py)         |
 
 ## Guardrail Classifier Agent
 

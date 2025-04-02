@@ -21,6 +21,8 @@ def build_reflector_node(
     executor_node_name: str = "executor",
     response_processor_node_name: str = "save-turn",
 ):
+    """Builds a LangGraph node to reflect on the executed plan and respond or create a new plan."""
+
     NextNodeT = Literal[executor_node_name, response_processor_node_name]  # type: ignore
 
     async def ainvoke(
@@ -30,10 +32,10 @@ def build_reflector_node(
         """
         Asynchronously reflects on the executed plan and determines the next action.
 
-        This function takes the current conversation state, which includes the executed plan, and uses
-        the `reflect_plan` function to analyze the results and decide whether to generate a new plan
-        or provide a direct response. It then updates the conversation state and directs the flow
-        to the appropriate next node (executor or planner).
+        This function takes the current conversation state, which includes the executed plan,
+        and uses the `reflect_plan` function to analyze the results and decide whether to
+        generate a new plan or provide a direct response. It then updates the conversation state
+        and directs the flow to the appropriate next node.
 
         Runtime configuration should be passed in `config.configurable.planner_config`.
 
@@ -42,7 +44,7 @@ def build_reflector_node(
             config: The LangChain RunnableConfig containing agent-specific configurations.
 
         Returns:
-            A Command object that specifies the next node to transition to (executor or planner) and the
+            A Command object that specifies the next node to transition to and the
             updated conversation state. The state includes the updated plan or response.
 
         Raises:

@@ -44,6 +44,8 @@ def build_chat_node(
     system_prompt: str,
     function_spec_loader: schemas.RuntimeFunctionSpecLoader | None = None,
 ):
+    """Builds a LangGraph node for generating chat responses using a Gemini model."""
+
     async def ainvoke(
         state: ChatState,
         config: lc_config.RunnableConfig,
@@ -51,9 +53,10 @@ def build_chat_node(
         """
         Asynchronously invokes the chat node to generate a response using a Gemini model.
 
-        This function takes the current conversation state, including the user's input and conversation history,
-        and generates a response using a Gemini model. It supports function calling to retrieve live data
-        It streams the function calls, responses, and response text before updating the state.
+        This function takes the current conversation state, including the user's input
+        and conversation history to generate a response using a Gemini model. It supports
+        function calling to retrieve live data and streams the function calls, responses,
+        and response text before updating the state.
 
         Runtime configuration should be passed in `config.configurable.chat_config`.
 
@@ -152,7 +155,10 @@ def build_chat_node(
         except Exception as e:  # pylint: disable=broad-exception-caught
             logger.exception(e)
             # unexpected error, display it
-            response_text = f"An unexpected error occurred during generation, please try again.\n\nError = {str(e)}"
+            response_text = (
+                "An unexpected error occurred during generation, please try again."
+                f"\n\nError = {str(e)}"
+            )
             stream_writer({"error": response_text})
 
             new_contents.append(

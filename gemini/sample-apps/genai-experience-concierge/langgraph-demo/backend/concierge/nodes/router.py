@@ -72,6 +72,10 @@ def build_semantic_router_node(
     system_prompt: str,
     target_nodes: dict[RouterTarget, str],
 ):
+    """
+    Builds a LangGraph node that can dynamically route between sub-agents based on user intent.
+    """
+
     NextNodeT = Literal[*target_nodes]  # type: ignore
 
     async def ainvoke(

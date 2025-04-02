@@ -11,7 +11,11 @@ from google.genai import types as genai_types
 
 find_inventory_fd = genai_types.FunctionDeclaration(
     response=None,
-    description="Look up the inventory query for a given product at a certain store. The product ID and store ID must be known before calling this function. If either are not known, use the other tools to first find the right store and product IDs.",
+    description="""
+Look up the inventory query for a given product at a certain store.
+The product ID and store ID must be known before calling this function.
+If either are not known, use the other tools to first find the right store and product IDs.
+""".strip(),
     name="find_inventory",
     parameters=genai_types.Schema(
         properties={
@@ -42,25 +46,30 @@ def generate_find_inventory_handler(
 
     Args:
         project (str): The Google Cloud project ID.
-        cymbal_inventory_table_uri (str): The URI of the BigQuery table containing inventory information.
+        cymbal_inventory_table_uri (str): The URI of the BigQuery table containing
+            inventory information.
         cymbal_dataset_location (str): The location of the BigQuery dataset.
 
     Returns:
-        Callable: A function that takes store ID and product ID as input and returns an InventorySearchResult.
+        Callable: A function that takes store ID and product ID as input and returns
+            an InventorySearchResult.
     """
 
     def find_inventory(
         store_id: int,
         product_id: str,
     ) -> schemas.InventorySearchResult:
-        """Look up the inventory query for a given product at a certain store. The product ID and store ID must be known before calling this function. If either are not known, use the other tools to first find the right store and product IDs.
+        """Look up the inventory query for a given product at a certain store.
+        The product ID and store ID must be known before calling this function.
+        If either are not known, use the other tools to first find the right store and product IDs.
 
         Args:
             store_id (int): Unique identifier of the store.
             product_id (str): Unique identifier of the product.
 
         Returns:
-            InventorySearchResult: The return value. Object including the current inventory and/or an error message.
+            InventorySearchResult: The return value.
+                Object including the current inventory and/or an error message.
         """
         nonlocal project, cymbal_inventory_table_uri
 

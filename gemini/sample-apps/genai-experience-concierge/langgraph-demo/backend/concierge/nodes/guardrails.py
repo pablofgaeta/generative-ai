@@ -16,6 +16,8 @@ import pydantic
 
 logger = logging.getLogger(__name__)
 
+DEFAULT_FALLBACK_RESPONSE = "I apologize, but I am unable to assist with this query as it falls outside the scope of my knowledge base."  # pylint: disable=line-too-long
+
 
 class InputGuardrails(pydantic.BaseModel):
     """
@@ -47,11 +49,15 @@ class InputGuardrails(pydantic.BaseModel):
 
 
 class GuardrailTurn(schemas.BaseTurn):
+    """Represents a single turn in a conversation with guardrails."""
+
     input_guardrails: InputGuardrails | None
     """The guardrail classification for this turn, if any."""
 
 
 class GuardrailState(TypedDict, total=False):
+    """Stores the active turn and conversation history."""
+
     current_turn: GuardrailTurn | None
     """The current turn being processed."""
 
@@ -60,6 +66,8 @@ class GuardrailState(TypedDict, total=False):
 
 
 class GuardrailConfig(pydantic.BaseModel):
+    """Configuration settings for the guardrails node."""
+
     project: str
     region: str
     guardrail_model_name: str
@@ -70,8 +78,10 @@ def build_guardrail_node(
     allowed_next_node: str,
     blocked_next_node: str,
     system_prompt: str,
-    guardrail_fallback_response: str = "I apologize, but I am unable to assist with this query as it falls outside the scope of my knowledge base.",
+    guardrail_fallback_response: str = DEFAULT_FALLBACK_RESPONSE,
 ):
+    """Builds a LangGraph node for classifying user input as blocked or allowed."""
+
     NextNodeT = Literal[allowed_next_node, blocked_next_node]  # type: ignore
 
     async def ainvoke(
@@ -79,18 +89,20 @@ def build_guardrail_node(
         config: lc_config.RunnableConfig,
     ) -> lg_types.Command[NextNodeT]:  # type: ignore
         """
-        Asynchronously invokes the guardrails node to classify user input and determine the next action.
+        Asynchronously invokes the guardrails node to classify user input
+        and determine the next action.
 
-        This function classifies the user's input based on predefined guardrails, determining whether the input
-        should be blocked or allowed. If blocked, a guardrail response is generated and the conversation is
-        directed to the post-processing node. If allowed, the conversation proceeds to the chat node.
+        This function classifies the user's input based on predefined guardrails,
+        determining whether the input should be blocked or allowed. If blocked,
+        a guardrail response is generated and the conversation is directed
+        to the post-processing node. If allowed, the conversation proceeds to the chat node.
 
         Args:
             state: The current state of the conversation session, including user input and history.
             config: The LangChain RunnableConfig containing agent-specific configurations.
 
         Returns:
-            A Command object that specifies the next node to transition to (chat or post-processing)
+            A Command object that specifies the next node to transition to
             and the updated conversation state. This state includes the guardrail classification
             and the appropriate response to the user.
         """
@@ -143,7 +155,10 @@ def build_guardrail_node(
             guardrail_classification = InputGuardrails(
                 blocked=True,
                 reason=error_reason,
-                guardrail_response="An error occurred during response generation. Please try again later.",
+                guardrail_response=(
+                    "An error occurred during response generation."
+                    " Please try again later."
+                ),
             )
 
         stream_writer(

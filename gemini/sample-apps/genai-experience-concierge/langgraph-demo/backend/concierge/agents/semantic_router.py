@@ -1,6 +1,7 @@
 # Copyright 2025 Google. This software is provided as-is, without warranty or
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
+"""Gemini agent with a semantic router layer to select sub-agents."""
 
 import enum
 
@@ -20,14 +21,13 @@ class RouterTarget(enum.Enum):
     """Target for unsupported queries."""
 
 
+# pylint: disable=line-too-long
 ROUTING_SYSTEM_PROMPT = f"""
 You are an expert in classifying user queries for an agentic workflow for Cymbal, a retail company.
 First reason through how you will classify the query given the conversation history.
 Then, classify user queries to be sent to one of several AI assistants that can help the user.
 
-Classify every inputted query as: "{RouterTarget.CUSTOMER_SERVICE.value}", "{RouterTarget.RETAIL_SEARCH.value}", "{RouterTarget.UNSUPPORTED.value}".
-
-Class target descriptions:
+Classify every inputted query as:
 - "{RouterTarget.RETAIL_SEARCH.value}": Any pleasantries/general conversation or discussion of Cymbal retail products/stores/inventory, including live data.
 - "{RouterTarget.CUSTOMER_SERVICE.value}": Queries related to customer service such as item returns, policies, complaints, FAQs, escalations, etc.
 - "{RouterTarget.UNSUPPORTED.value}": Any query that is off topic or out of scope for one of the other agents.
@@ -52,11 +52,14 @@ input: What's the weather like today?
 output: {RouterTarget.UNSUPPORTED.value}
 </examples>
 """.strip()
+# pylint: enable=line-too-long
 
 
 def load_agent(
     runtime_settings: settings.RuntimeSettings,
 ) -> langgraph_agent.LangGraphAgent:
+    """Loads the agent with a semantic router layer to select sub-agents."""
+
     customer_service_node = chat.build_chat_node(
         node_name="customer-service",
         next_node="save-turn",

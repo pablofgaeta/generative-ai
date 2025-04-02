@@ -1,6 +1,7 @@
 # Copyright 2025 Google. This software is provided as-is, without warranty or
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
+"""Simple Gemini chat agent for the Concierge demo."""
 
 from concierge import settings, utils
 from concierge.langgraph_server import langgraph_agent
@@ -10,6 +11,8 @@ from concierge.nodes import chat, save_turn
 def load_agent(
     runtime_settings: settings.RuntimeSettings,
 ) -> langgraph_agent.LangGraphAgent:
+    """Loads the simple Gemini chat agent for the Concierge demo."""
+
     chat_node = chat.build_chat_node(
         node_name="chat",
         next_node="save-turn",

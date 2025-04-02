@@ -1,27 +1,36 @@
 # Copyright 2025 Google. This software is provided as-is, without warranty or
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
+"""Function calling chat agent for the Concierge demo."""
 
 from concierge import schemas, settings, utils
 from concierge.langgraph_server import langgraph_agent
 from concierge.nodes import chat, save_turn
 from concierge.tools import find_inventory, find_products, find_stores
 
+# pylint: disable=line-too-long
 FUNCTION_CALLING_SYSTEM_PROMPT = """
-You are a chat assistant for the Cymbal Retail site which manages inventory for stores/businesses across many industries.
-Help answer any user questions.
-Whenever you don't know something, use one or more of your tools before responding to retrieve live data about stores, products, and inventory.
+You are a chat assistant for the Cymbal Retail site which manages inventory for
+stores/businesses across many industries. Help answer any user questions.
+Whenever you don't know something, use one or more of your tools before responding
+to retrieve live data about stores, products, and inventory.
+
 The purpose of each tool is:
 - find_products: Search for products given some stores, price range, and/or open text search query
 - find_stores: Search for stores given its name, some offered products, and/or a search radius near the user.
 - find_inventory: Search for the inventory of a given product/store pair.
-Note: the user's location is stored in the persistent session storage. It can be retrieved in the background for the store search radius.
+
+Note: the user's location is stored in the persistent session storage.
+It can be retrieved in the background for the store search radius.
 """.strip()
+# pylint: enable=line-too-long
 
 
 def load_agent(
     runtime_settings: settings.RuntimeSettings,
 ) -> langgraph_agent.LangGraphAgent:
+    """Loads the function calling chat agent for the Concierge demo."""
+
     chat_node = chat.build_chat_node(
         node_name="chat",
         next_node="save-turn",

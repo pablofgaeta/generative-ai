@@ -35,7 +35,10 @@ class Coordinate(pydantic.BaseModel):
 
 
 class BaseTurn(TypedDict, total=False):
-    """Represents a single turn in a conversation. May be extended, but attributes cannot be overwritten."""
+    """Represents a single turn in a conversation.
+
+    May be extended, but attributes cannot be overwritten.
+    """
 
     user_input: str
     """The user's input for this turn."""
@@ -57,7 +60,7 @@ class FunctionSpec(NamedTuple):
     callable: Callable
 
 
-class RuntimeFunctionSpecLoader(Protocol):
+class RuntimeFunctionSpecLoader(Protocol):  # pylint: disable=too-few-public-methods
     """Protocol for a function specification loader."""
 
     def __call__(self, turn: BaseTurn) -> list[FunctionSpec]:

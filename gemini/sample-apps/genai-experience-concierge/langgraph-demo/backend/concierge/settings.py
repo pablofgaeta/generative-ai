@@ -46,7 +46,9 @@ class RuntimeSettings(pydantic_settings.BaseSettings):
     )
 
     @pydantic.model_validator(mode="after")
-    def check_passwords_match(self) -> Self:
+    def ensure_cymbal_dataset_resources(self) -> Self:
+        """Ensure that the Cymbal dataset resources are set."""
+
         if self.cymbal_embedding_model_uri is None:
             self.cymbal_embedding_model_uri = (
                 f"{self.project}.{self.cymbal_dataset}.text_embedding"

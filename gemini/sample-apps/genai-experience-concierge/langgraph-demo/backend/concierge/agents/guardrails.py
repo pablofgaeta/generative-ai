@@ -1,11 +1,13 @@
 # Copyright 2025 Google. This software is provided as-is, without warranty or
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
+"""Gemini chat agent with guardrails for the Concierge demo."""
 
 from concierge import settings, utils
 from concierge.langgraph_server import langgraph_agent
 from concierge.nodes import chat, guardrails, save_turn
 
+# pylint: disable=line-too-long
 GUARDRAIL_SYSTEM_PROMPT = """
 Tasks:
 - Your job is to classify whether a query should be blocked.
@@ -28,11 +30,14 @@ Blocking Criteria:
 Additional Notes:
 - Appropriate conversational inputs are valid even if they are not specifically about retail.
 """.strip()
+# pylint: enable=line-too-long
 
 
 def load_agent(
     runtime_settings: settings.RuntimeSettings,
 ) -> langgraph_agent.LangGraphAgent:
+    """Loads the Gemini chat agent with guardrails for the Concierge demo."""
+
     guardrails_node = guardrails.build_guardrail_node(
         node_name="guardrails",
         allowed_next_node="chat",

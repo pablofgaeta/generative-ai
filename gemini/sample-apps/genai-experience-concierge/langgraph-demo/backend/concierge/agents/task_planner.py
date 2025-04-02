@@ -1,6 +1,7 @@
 # Copyright 2025 Google. This software is provided as-is, without warranty or
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
+"""Task planner agent for the Concierge demo."""
 
 from concierge import settings, utils
 from concierge.langgraph_server import langgraph_agent
@@ -11,6 +12,8 @@ from concierge.nodes.task_planning import executor, planner, reflector, schemas
 def load_agent(
     runtime_settings: settings.RuntimeSettings,
 ) -> langgraph_agent.LangGraphAgent:
+    """Loads the task planner agent for the Concierge demo."""
+
     planner_node = planner.build_planner_node(
         node_name="planner",
         plan_processor_node_name="executor",

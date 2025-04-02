@@ -3,6 +3,8 @@
 # agreement with Google.
 """Schemas for the task planner agent nodes."""
 
+# pylint: disable=line-too-long
+
 from typing import TypedDict
 
 from concierge import schemas
@@ -78,6 +80,8 @@ class PlannerState(TypedDict, total=False):
 
 
 class TaskPlannerConfig(pydantic.BaseModel):
+    """Configuration settings for the task planner node."""
+
     project: str
     region: str = "us-central1"
     planner_model_name: str = "gemini-2.0-flash-001"

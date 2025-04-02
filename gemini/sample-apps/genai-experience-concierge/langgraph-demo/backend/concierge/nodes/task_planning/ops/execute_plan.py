@@ -21,8 +21,8 @@ async def execute_plan(
     """
     Executes a given plan step-by-step and yields the results of each task.
 
-    This function iterates through the tasks in a given plan, executes each task using a Gemini model
-    with Google Search tool enabled, and yields the index and updated task with the result.
+    This function iterates through the tasks in a given plan, executes each task using a Gemini
+    model with Google Search tool enabled, and yields the index and updated task with the result.
 
     Args:
         plan: The plan to execute, containing a list of tasks.
@@ -40,7 +40,11 @@ async def execute_plan(
     client = genai.Client(vertexai=True, project=project, location=region)
 
     search_tool = genai_types.Tool(google_search=genai_types.GoogleSearch())
-    system_instruction = "Your mission is to execute the research goal provided and respond with findings. The result is not provided directly to the user, but instead provided to another agent to summarize findings."
+    system_instruction = """
+Your mission is to execute the research goal provided and respond with findings.
+The result is not provided directly to the user,
+but instead provided to another agent to summarize findings.
+""".strip()
 
     for idx, task in enumerate(executed_plan.tasks):
         if task.result is not None:

@@ -1,6 +1,7 @@
 # Copyright 2025 Google. This software is provided as-is, without warranty or
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
+"""LangGraph node to generate a research plan or respond to a user."""
 
 import logging
 from typing import Literal
@@ -20,6 +21,8 @@ def build_planner_node(
     plan_processor_node_name: str = "executor",
     response_processor_node_name: str = "save-turn",
 ):
+    """Builds a LangGraph node to generate a research plan or respond to a user."""
+
     NextNodeT = Literal[plan_processor_node_name, response_processor_node_name]  # type: ignore
 
     async def ainvoke(
@@ -27,12 +30,12 @@ def build_planner_node(
         config: lc_config.RunnableConfig,
     ) -> lg_types.Command[NextNodeT]:  # type: ignore
         """
-        Asynchronously generates a plan or a direct response based on the current conversation state.
+        Generates a plan or a direct response based on the current conversation state.
 
-        This function takes the current conversation state, which includes the user's input and history,
-        and uses the `generate_plan` function to determine whether to create a plan for further action
-        or to provide a direct response. It then updates the conversation state and directs the flow
-        to the appropriate next node (executor or post-processing).
+        This function takes the current conversation state, which includes the user's input
+        and history, and uses the `generate_plan` function to determine whether to create a
+        plan for further action or to provide a direct response. It then updates the conversation
+        state and directs the flow to the appropriate next node.
 
         Runtime configuration should be passed in `config.configurable.planner_config`.
 
@@ -41,7 +44,7 @@ def build_planner_node(
             config: The LangChain RunnableConfig containing agent-specific configurations.
 
         Returns:
-            A Command object that specifies the next node to transition to (executor or post-processing)
+            A Command object that specifies the next node to transition to
             and the updated conversation state. The state includes the generated plan or response.
 
         Raises:

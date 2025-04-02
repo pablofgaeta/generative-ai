@@ -17,6 +17,8 @@ logger = logging.getLogger(__name__)
 
 
 def build_executor_node(node_name: str = "executor", next_node: str = "reflector"):
+    """Builds a LangGraph node to execute a plan's tasks and update the conversation state."""
+
     async def ainvoke(
         state: schemas.PlannerState,
         config: lc_config.RunnableConfig,
@@ -24,8 +26,10 @@ def build_executor_node(node_name: str = "executor", next_node: str = "reflector
         """
         Asynchronously executes a plan's tasks and updates the conversation state.
 
-        This function takes the current conversation state, which includes a plan, and executes each task within that plan.
-        It utilizes the `execute_plan` function to process each task, updating the plan with the results as it goes.
+        This function takes the current conversation state, which includes a plan,
+        and executes each task within that plan.
+        It utilizes the `execute_plan` function to process each task, updating the
+        plan with the results as it goes.
         The function also streams the executed tasks to the user via the stream writer.
 
         Runtime configuration should be passed in `config.configurable.planner_config`.

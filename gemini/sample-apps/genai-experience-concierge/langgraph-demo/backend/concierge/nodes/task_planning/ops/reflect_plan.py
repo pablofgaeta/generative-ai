@@ -18,7 +18,8 @@ async def reflect_plan(
     model_name: str,
 ) -> schemas.PlanOrRespond:
     """
-    Reflects on a user's input and an executed plan to determine the next action (response or new plan).
+    Reflects on a user's input and an executed plan to determine the next action
+    (response or new plan).
 
     This function uses a Gemini model to analyze the user's last message, the overall goal of the
     research agent, and the steps that were executed in the previous plan. Based on this analysis,

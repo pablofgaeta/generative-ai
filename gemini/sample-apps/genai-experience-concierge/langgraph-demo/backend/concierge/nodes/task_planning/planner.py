@@ -51,10 +51,6 @@ def build_planner_node(
             TypeError: If the plan reflection action is of an unsupported type.
         """
 
-        planner_config = schemas.TaskPlannerConfig.model_validate(
-            config["configurable"].get("planner_config", {})
-        )
-
         stream_writer = get_stream_writer()
 
         current_turn = state.get("current_turn")
@@ -65,7 +61,11 @@ def build_planner_node(
 
         turns = state.get("turns", [])
 
-        plan_reflection = await generate_plan.generate_plan(
+        planner_config = schemas.TaskPlannerConfig.model_validate(
+            config["configurable"].get("planner_config", {})
+        )
+
+        generated_plan = await generate_plan.generate_plan(
             current_turn=current_turn,
             project=planner_config.project,
             region=planner_config.region,
@@ -74,28 +74,29 @@ def build_planner_node(
         )
 
         next_node = None
-        if isinstance(plan_reflection.action, schemas.Plan):
-            next_node = plan_processor_node_name
+        match generated_plan.action:
+            case schemas.Plan():
+                next_node = plan_processor_node_name
 
-            # Ensure results aren't set
-            for task in plan_reflection.action.tasks:
-                task.result = None
+                # Ensure results aren't set
+                for task in generated_plan.action.tasks:
+                    task.result = None
 
-            # Set initial plan
-            current_turn["plan"] = plan_reflection.action
-            stream_writer({"plan": plan_reflection.action.model_dump(mode="json")})
+                # Set initial plan
+                current_turn["plan"] = generated_plan.action
+                stream_writer({"plan": generated_plan.action.model_dump(mode="json")})
 
-        elif isinstance(plan_reflection.action, schemas.Response):
-            next_node = response_processor_node_name
+            case schemas.Response():
+                next_node = response_processor_node_name
 
-            # Update turn response
-            current_turn["response"] = plan_reflection.action.response
-            stream_writer({"response": plan_reflection.action.response})
+                # Update turn response
+                current_turn["response"] = generated_plan.action.response
+                stream_writer({"response": generated_plan.action.response})
 
-        else:
-            raise TypeError(
-                f"Unsupported plan reflection action: {type(plan_reflection.action)}"
-            )
+            case _:
+                raise TypeError(
+                    f"Unsupported plan action: {type(generated_plan.action)}"
+                )
 
         return lg_types.Command(
             update=schemas.PlannerState(current_turn=current_turn),

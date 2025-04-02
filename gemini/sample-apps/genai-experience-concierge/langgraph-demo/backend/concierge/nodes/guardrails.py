@@ -107,11 +107,11 @@ def build_guardrail_node(
             and the appropriate response to the user.
         """
 
+        stream_writer = get_stream_writer()
+
         guardrail_config = GuardrailConfig.model_validate(
             config["configurable"].get("guardrail_config", {})
         )
-
-        stream_writer = get_stream_writer()
 
         current_turn = state.get("current_turn")
         assert current_turn is not None, "current turn must be set"

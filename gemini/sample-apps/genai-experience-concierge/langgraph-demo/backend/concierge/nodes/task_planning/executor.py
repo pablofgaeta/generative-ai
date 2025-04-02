@@ -46,11 +46,11 @@ def build_executor_node(node_name: str = "executor", next_node: str = "reflector
             AssertionError: If the plan is not generated before execution.
         """
 
+        stream_writer = get_stream_writer()
+
         planner_config = schemas.TaskPlannerConfig.model_validate(
             config["configurable"].get("planner_config", {})
         )
-
-        stream_writer = get_stream_writer()
 
         current_turn = state.get("current_turn")
         assert current_turn is not None, "current turn must be set"

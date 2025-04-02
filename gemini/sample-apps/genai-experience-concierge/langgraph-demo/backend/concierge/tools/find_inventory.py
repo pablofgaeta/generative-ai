@@ -3,6 +3,8 @@
 # agreement with Google.
 """Search for product-store inventory in the Cymbal Retail dataset."""
 
+# pylint: disable=duplicate-code
+
 from typing import Callable
 
 from concierge.tools import schemas

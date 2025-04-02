@@ -61,11 +61,11 @@ def build_reflector_node(
         current_turn = state.get("current_turn")
         assert current_turn is not None, "current turn must be set"
 
-        user_input = current_turn.get("user_input")
-        assert user_input is not None, "user input must be set"
-
         plan = current_turn.get("plan")
         assert plan is not None, "plan must be set"
+
+        user_input = current_turn.get("user_input")
+        assert user_input is not None, "user input must be set"
 
         assert all(
             task.result is not None for task in plan.tasks
@@ -80,30 +80,31 @@ def build_reflector_node(
         )
 
         next_node = None
-        if isinstance(plan_reflection.action, schemas.Plan):
-            next_node = executor_node_name
+        match plan_reflection.action:
+            case schemas.Plan():
+                next_node = executor_node_name
 
-            # Ensure results aren't set
-            for task in plan_reflection.action.tasks:
-                task.result = None
+                # Ensure results aren't set
+                for task in plan_reflection.action.tasks:
+                    task.result = None
 
-            # Add new tasks from plan reflection
-            plan.tasks += plan_reflection.action.tasks
-            current_turn["plan"] = plan
+                # Add new tasks from plan reflection
+                plan.tasks += plan_reflection.action.tasks
+                current_turn["plan"] = plan
 
-            stream_writer({"plan": plan.model_dump(mode="json")})
+                stream_writer({"plan": plan.model_dump(mode="json")})
 
-        elif isinstance(plan_reflection.action, schemas.Response):
-            next_node = response_processor_node_name
+            case schemas.Response():
+                next_node = response_processor_node_name
 
-            # Update turn response
-            current_turn["response"] = plan_reflection.action.response
+                # Update turn response
+                current_turn["response"] = plan_reflection.action.response
 
-            stream_writer({"response": current_turn["response"]})
-        else:  # never
-            raise TypeError(
-                f"Unsupported plan reflection action: {type(plan_reflection.action)}"
-            )
+                stream_writer({"response": current_turn["response"]})
+            case _:  # never
+                raise TypeError(
+                    f"Unsupported plan reflection action: {type(plan_reflection.action)}"
+                )
 
         return lg_types.Command(
             update=schemas.PlannerState(current_turn=current_turn),

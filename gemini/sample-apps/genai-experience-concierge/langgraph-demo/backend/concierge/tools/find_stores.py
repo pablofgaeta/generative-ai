@@ -3,7 +3,7 @@
 # agreement with Google.
 """Search for stores in the Cymbal Retail dataset."""
 
-# pylint: disable=line-too-long
+# pylint: disable=line-too-long,duplicate-code
 
 from typing import Callable, Optional
 

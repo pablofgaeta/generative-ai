@@ -5,6 +5,7 @@
 
 # pylint: disable=line-too-long,duplicate-code
 
+import logging
 from typing import Callable, Optional
 
 from concierge import schemas as concierge_schemas
@@ -15,6 +16,8 @@ from thefuzz import fuzz
 
 MAX_STORE_RESULTS = 10
 STORE_NAME_SIMILARITY_THRESHOLD = 90
+
+logger = logging.getLogger(__name__)
 
 find_stores_fd = genai_types.FunctionDeclaration(
     response=None,
@@ -99,7 +102,12 @@ def generate_find_stores_handler(
             StoreSearchResult: The return value. Object including top matched stores and/or an error message.
         """
 
-        nonlocal project, cymbal_dataset_location, cymbal_stores_table_uri, cymbal_inventory_table_uri, user_coordinate
+        nonlocal \
+            project, \
+            cymbal_dataset_location, \
+            cymbal_stores_table_uri, \
+            cymbal_inventory_table_uri, \
+            user_coordinate
 
         product_ids = product_ids or []
 
@@ -108,7 +116,7 @@ def generate_find_stores_handler(
         ]()
 
         if max_results >= MAX_STORE_RESULTS:
-            print(
+            logger.warning(
                 f"Top k is too large ({max_results}). Setting to {MAX_STORE_RESULTS}..."
             )
             max_results = MAX_STORE_RESULTS
@@ -208,9 +216,7 @@ def generate_find_stores_handler(
                 or fuzz.partial_ratio(row["name"], store_name)
                 >= STORE_NAME_SIMILARITY_THRESHOLD
             )
-        ][
-            :max_results
-        ]  # filter max results
+        ][:max_results]  # filter max results
 
         return schemas.StoreSearchResult(stores=stores, query=query)
 

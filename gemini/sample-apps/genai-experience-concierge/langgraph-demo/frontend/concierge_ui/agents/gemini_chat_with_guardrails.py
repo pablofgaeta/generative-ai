@@ -2,13 +2,15 @@
 # representation for any use or purpose. Your use of it is subject to your
 # agreement with Google.
 
-# disable duplicate code since chat handlers for each agent may be very similar but not
-# exactly the same
+# disable duplicate code since chat handlers for each agent may be very similar
 # pylint: disable=duplicate-code
 
+import logging
 from typing import Generator
 
 from langgraph.pregel import remote
+
+logger = logging.getLogger(__name__)
 
 
 def chat_handler(
@@ -45,9 +47,7 @@ def chat_handler(
             classification_emoji = "❌" if is_blocked else "✅"
             reason = chunk["guardrail_classification"]["reason"]
 
-            text = (
-                f"Guardrail classification: {classification_emoji}\n\nReason: {reason}"
-            )
+            text = f"Guardrail classification: {classification_emoji}\n\nReason: {reason}"
             current_source = "guardrail_classification"
 
         elif "text" in chunk:
@@ -59,7 +59,7 @@ def chat_handler(
             current_source = "error"
 
         else:
-            print("unhandled chunk case:", chunk)
+            logger.warning("unhandled chunk case:", chunk)
 
         if last_source is not None and last_source != current_source:
             text = "\n\n---\n\n" + text

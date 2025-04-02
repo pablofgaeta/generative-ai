@@ -100,10 +100,10 @@ the Cymbal Retail company and their products/stores.
     router_node = router.build_semantic_router_node(
         node_name="semantic-router",
         system_prompt=ROUTING_SYSTEM_PROMPT,
-        target_nodes={
-            RouterTarget.CUSTOMER_SERVICE: customer_service_node.name,
-            RouterTarget.RETAIL_SEARCH: retail_search_node.name,
-            RouterTarget.UNSUPPORTED: unsupported_node.name,
+        class_node_mapping={
+            RouterTarget.CUSTOMER_SERVICE.value: customer_service_node.name,
+            RouterTarget.RETAIL_SEARCH.value: retail_search_node.name,
+            RouterTarget.UNSUPPORTED.value: unsupported_node.name,
         },
     )
 

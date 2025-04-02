@@ -65,8 +65,8 @@ def build_demo_page(
     if description:
         st.markdown(description)
 
-    thread_key = f"{config.id.hex}-thread"
-    messages_key = f"{config.id.hex}-messages"
+    thread_key = f"{config.id}-thread"
+    messages_key = f"{config.id}-messages"
 
     # Set session ID
     if thread_key not in st.session_state:
@@ -107,6 +107,4 @@ def build_demo_page(
             )
 
         # Add assistant response to chat history
-        st.session_state[messages_key].append(
-            {"role": "assistant", "content": response}
-        )
+        st.session_state[messages_key].append({"role": "assistant", "content": response})

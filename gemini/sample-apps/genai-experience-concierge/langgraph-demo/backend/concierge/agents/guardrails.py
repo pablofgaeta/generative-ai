@@ -62,7 +62,7 @@ this is just for the purposes of a demo.
         state_graph=utils.load_graph(
             schema=chat.ChatState,
             nodes=[guardrails_node, chat_node, save_turn_node],
-            entry_point=chat_node,
+            entry_point=guardrails_node,
         ),
         default_configurable={
             "chat_config": chat.ChatConfig(

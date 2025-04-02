@@ -5,6 +5,7 @@
 
 # pylint: disable=line-too-long,duplicate-code
 
+import logging
 from typing import Callable, Optional
 
 from concierge.tools import schemas
@@ -12,6 +13,8 @@ from google.cloud import bigquery
 from google.genai import types as genai_types
 
 MAX_PRODUCT_RESULTS = 10
+
+logger = logging.getLogger(__name__)
 
 find_products_fd = genai_types.FunctionDeclaration(
     response=None,
@@ -112,10 +115,15 @@ def generate_find_products_handler(
             ProductSearchResult: The return value. Object including top matched products and/or an error message.
         """
 
-        nonlocal project, cymbal_dataset_location, cymbal_products_table_uri, cymbal_inventory_table_uri, cymbal_embedding_model_uri
+        nonlocal \
+            project, \
+            cymbal_dataset_location, \
+            cymbal_products_table_uri, \
+            cymbal_inventory_table_uri, \
+            cymbal_embedding_model_uri
 
         if max_results >= MAX_PRODUCT_RESULTS:
-            print(
+            logger.warning(
                 f"Top k is too large ({max_results}). Setting to {MAX_PRODUCT_RESULTS}..."
             )
             max_results = MAX_PRODUCT_RESULTS

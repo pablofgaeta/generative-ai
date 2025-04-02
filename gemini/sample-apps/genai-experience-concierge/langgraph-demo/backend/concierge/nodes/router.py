@@ -5,7 +5,7 @@
 
 import enum
 import logging
-from typing import Generic, Literal, TypedDict, TypeVar
+from typing import Literal, TypedDict, TypeVar
 
 from concierge import schemas, utils
 from google import genai
@@ -17,40 +17,33 @@ import pydantic
 
 logger = logging.getLogger(__name__)
 
-RouterTarget = TypeVar("RouterTarget", bound=enum.Enum)
+RouterTarget = TypeVar("RouterTarget", bound=enum.StrEnum)
 
 
-class RouterClassification(pydantic.BaseModel, Generic[RouterTarget]):
+class RouterClassification(pydantic.BaseModel):
     """Structured classification output for routing user queries."""
 
-    reason: str = pydantic.Field(
-        description="Reason for classifying the latest user query."
-    )
+    reason: str
     """Explanation of why the query was classified to a specific target."""
 
-    target: RouterTarget
+    target: str
     """The target node to route the query to."""
 
-    model_config = pydantic.ConfigDict(
-        json_schema_extra={"propertyOrdering": ["reason", "target"]}
-    )
-    """Configuration to specify the ordering of properties in the JSON schema."""
 
-
-class RouterTurn(schemas.BaseTurn, Generic[RouterTarget]):
+class RouterTurn(schemas.BaseTurn):
     """Represents a single turn in a conversation."""
 
-    router_classification: RouterClassification[RouterTarget] | None
+    router_classification: RouterClassification | None
     """The router classification for the current turn."""
 
 
-class RouterState(TypedDict, Generic[RouterTarget], total=False):
+class RouterState(TypedDict, total=False):
     """Stores the active turn and conversation history."""
 
-    current_turn: RouterTurn[RouterTarget] | None
+    current_turn: RouterTurn | None
     """The current conversation turn."""
 
-    turns: list[RouterTurn[RouterTarget]]
+    turns: list[RouterTurn]
     """List of all conversation turns in the session."""
 
 
@@ -70,17 +63,36 @@ class RouterConfig(pydantic.BaseModel):
 def build_semantic_router_node(
     node_name: str,
     system_prompt: str,
-    target_nodes: dict[RouterTarget, str],
+    class_node_mapping: dict[str, str],
 ) -> schemas.Node:
     """
     Builds a LangGraph node that can dynamically route between sub-agents based on user intent.
     """
 
     # ignore typing errors, this creates a valid literal type
-    NextNodeT = Literal[*target_nodes]  # type: ignore
+    NextNodeT = Literal[*class_node_mapping.values()]  # type: ignore
+
+    response_schema = genai_types.Schema(
+        properties={
+            "target": genai_types.Schema(
+                type=genai_types.Type.STRING,
+                enum=class_node_mapping.keys(),
+                description="The target node to route the query to.",
+                nullable=False,
+            ),
+            "reason": genai_types.Schema(
+                type=genai_types.Type.STRING,
+                description="Reason for classifying the latest user query.",
+                nullable=False,
+            ),
+        },
+        required=["reason", "target"],
+        type=genai_types.Type.OBJECT,
+        property_ordering=["reason", "target"],
+    )
 
     async def ainvoke(
-        state: RouterState[RouterTarget],
+        state: RouterState,
         config: lc_config.RunnableConfig,
     ) -> lg_types.Command[NextNodeT]:
         """
@@ -118,9 +130,10 @@ def build_semantic_router_node(
         )
 
         user_content = utils.load_user_content(current_turn=current_turn)
+        turns = state.get("turns", [])
         contents = [
             content
-            for turn in state.get("turns", [])[-router_config.max_router_turn_history :]
+            for turn in turns[-router_config.max_router_turn_history :]  # noqa: E203
             for content in turn.get("messages", [])
         ] + [user_content]
 
@@ -134,18 +147,18 @@ def build_semantic_router_node(
                 seed=0,
                 system_instruction=system_prompt,
                 response_mime_type="application/json",
-                response_schema=RouterClassification[RouterTarget],
+                response_schema=response_schema,
             ),
         )
 
-        router_classification = RouterClassification[RouterTarget].model_validate_json(
+        router_classification = RouterClassification.model_validate_json(
             response.text or ""
         )
 
         stream_writer(
             {
                 "router_classification": {
-                    "target": router_classification.target.value,
+                    "target": router_classification.target,
                     "reason": router_classification.reason,
                 }
             }
@@ -154,7 +167,7 @@ def build_semantic_router_node(
         current_turn["router_classification"] = router_classification
 
         next_node = None
-        for target_value, target_node in target_nodes.items():
+        for target_value, target_node in class_node_mapping.items():
             if router_classification.target == target_value:
                 next_node = target_node
                 break

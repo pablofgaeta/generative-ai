@@ -10,7 +10,6 @@ from typing import Generator
 
 from langgraph.pregel import remote
 
-
 logger = logging.getLogger(__name__)
 
 

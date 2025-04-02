@@ -47,7 +47,9 @@ def chat_handler(
             classification_emoji = "❌" if is_blocked else "✅"
             reason = chunk["guardrail_classification"]["reason"]
 
-            text = f"Guardrail classification: {classification_emoji}\n\nReason: {reason}"
+            text = (
+                f"Guardrail classification: {classification_emoji}\n\nReason: {reason}"
+            )
             current_source = "guardrail_classification"
 
         elif "text" in chunk:

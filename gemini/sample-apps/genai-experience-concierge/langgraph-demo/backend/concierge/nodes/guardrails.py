@@ -79,7 +79,7 @@ def build_guardrail_node(
     blocked_next_node: str,
     system_prompt: str,
     guardrail_fallback_response: str = DEFAULT_FALLBACK_RESPONSE,
-):
+) -> schemas.Node:
     """Builds a LangGraph node for classifying user input as blocked or allowed."""
 
     NextNodeT = Literal[allowed_next_node, blocked_next_node]  # type: ignore
@@ -87,7 +87,7 @@ def build_guardrail_node(
     async def ainvoke(
         state: GuardrailState,
         config: lc_config.RunnableConfig,
-    ) -> lg_types.Command[NextNodeT]:  # type: ignore
+    ) -> lg_types.Command[NextNodeT]:
         """
         Asynchronously invokes the guardrails node to classify user input
         and determine the next action.
@@ -110,7 +110,7 @@ def build_guardrail_node(
         stream_writer = get_stream_writer()
 
         guardrail_config = GuardrailConfig.model_validate(
-            config["configurable"].get("guardrail_config", {})
+            config.get("configurable", {}).get("guardrail_config", {})
         )
 
         current_turn = state.get("current_turn")
@@ -145,7 +145,7 @@ def build_guardrail_node(
             )
 
             guardrail_classification = InputGuardrails.model_validate_json(
-                response.text.strip()
+                response.text.strip() if response.text else ""
             )
 
         except Exception as e:  # pylint: disable=broad-exception-caught

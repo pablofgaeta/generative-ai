@@ -16,13 +16,16 @@ from langgraph.config import get_stream_writer
 logger = logging.getLogger(__name__)
 
 
-def build_executor_node(node_name: str = "executor", next_node: str = "reflector"):
+def build_executor_node(
+    node_name: str = "executor",
+    next_node: str = "reflector",
+) -> concierge_schemas.Node:
     """Builds a LangGraph node to execute a plan's tasks and update the conversation state."""
 
     async def ainvoke(
         state: schemas.PlannerState,
         config: lc_config.RunnableConfig,
-    ) -> lg_types.Command[Literal[next_node]]:  # type: ignore
+    ) -> lg_types.Command[Literal[next_node]]:
         """
         Asynchronously executes a plan's tasks and updates the conversation state.
 

@@ -43,13 +43,13 @@ def build_chat_node(
     next_node: str,
     system_prompt: str,
     function_spec_loader: schemas.RuntimeFunctionSpecLoader | None = None,
-):
+) -> schemas.Node:
     """Builds a LangGraph node for generating chat responses using a Gemini model."""
 
     async def ainvoke(
         state: ChatState,
         config: lc_config.RunnableConfig,
-    ) -> lg_types.Command[Literal[next_node]]:  # type: ignore
+    ) -> lg_types.Command[Literal[next_node]]:
         """
         Asynchronously invokes the chat node to generate a response using a Gemini model.
 
@@ -71,7 +71,7 @@ def build_chat_node(
         nonlocal function_spec_loader
 
         chat_config = ChatConfig.model_validate(
-            config["configurable"].get("chat_config", {})
+            config.get("configurable", {}).get("chat_config", {})
         )
 
         stream_writer = get_stream_writer()
@@ -93,7 +93,7 @@ def build_chat_node(
         response_text = ""
         new_contents = [utils.load_user_content(current_turn=current_turn)]
         try:
-            tools = None
+            tools = []
             if function_specs:
                 tools = [
                     genai_types.Tool(
@@ -125,7 +125,7 @@ def build_chat_node(
 
             async for content in response:
                 used_content = False
-                for part in content.parts:
+                for part in content.parts or []:
                     if part.text:
                         response_text += part.text
                         used_content = True

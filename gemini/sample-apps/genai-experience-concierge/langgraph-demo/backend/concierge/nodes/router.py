@@ -71,17 +71,18 @@ def build_semantic_router_node(
     node_name: str,
     system_prompt: str,
     target_nodes: dict[RouterTarget, str],
-):
+) -> schemas.Node:
     """
     Builds a LangGraph node that can dynamically route between sub-agents based on user intent.
     """
 
+    # ignore typing errors, this creates a valid literal type
     NextNodeT = Literal[*target_nodes]  # type: ignore
 
     async def ainvoke(
         state: RouterState[RouterTarget],
         config: lc_config.RunnableConfig,
-    ) -> lg_types.Command[NextNodeT]:  # type: ignore
+    ) -> lg_types.Command[NextNodeT]:
         """
         Asynchronously invokes the router node to classify user input and determine the next action.
 
@@ -101,7 +102,7 @@ def build_semantic_router_node(
         """
 
         router_config = RouterConfig.model_validate(
-            config["configurable"].get("router_config", {})
+            config.get("configurable", {}).get("router_config", {})
         )
 
         stream_writer = get_stream_writer()
@@ -138,7 +139,7 @@ def build_semantic_router_node(
         )
 
         router_classification = RouterClassification[RouterTarget].model_validate_json(
-            response.text
+            response.text or ""
         )
 
         stream_writer(

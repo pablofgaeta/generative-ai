@@ -19,12 +19,15 @@ class SaveTurnState(TypedDict):
     turns: list[schemas.BaseTurn]
 
 
-def build_save_turn_node(node_name: str = "save-turn", next_node: str = "__end__"):
+def build_save_turn_node(
+    node_name: str = "save-turn",
+    next_node: str = "__end__",
+) -> schemas.Node:
     """Builds a LangGraph node to save the current turn to the conversation history."""
 
     async def ainvoke(
         state: SaveTurnState,
-    ) -> lg_types.Command[Literal[next_node]]:  # type: ignore
+    ) -> lg_types.Command[Literal[next_node]]:
         """
         Saves the current turn to the conversation history and resets the current turn.
 
@@ -45,7 +48,7 @@ def build_save_turn_node(node_name: str = "save-turn", next_node: str = "__end__
 
         assert current_turn is not None, "Current turn must be set."
         assert (
-            current_turn["response"] is not None
+            "response" in current_turn and current_turn["response"] is not None
         ), "Response from current turn must be set."
 
         turns = state.get("turns", []) + [current_turn]

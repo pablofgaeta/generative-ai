@@ -20,7 +20,7 @@ def build_planner_node(
     node_name: str = "planner",
     plan_processor_node_name: str = "executor",
     response_processor_node_name: str = "save-turn",
-):
+) -> concierge_schemas.Node:
     """Builds a LangGraph node to generate a research plan or respond to a user."""
 
     NextNodeT = Literal[plan_processor_node_name, response_processor_node_name]  # type: ignore
@@ -28,7 +28,7 @@ def build_planner_node(
     async def ainvoke(
         state: schemas.PlannerState,
         config: lc_config.RunnableConfig,
-    ) -> lg_types.Command[NextNodeT]:  # type: ignore
+    ) -> lg_types.Command[NextNodeT]:
         """
         Generates a plan or a direct response based on the current conversation state.
 

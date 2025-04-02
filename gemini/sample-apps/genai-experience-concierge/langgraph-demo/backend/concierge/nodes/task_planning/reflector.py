@@ -20,7 +20,7 @@ def build_reflector_node(
     node_name: str = "reflector",
     executor_node_name: str = "executor",
     response_processor_node_name: str = "save-turn",
-):
+) -> concierge_schemas.Node:
     """Builds a LangGraph node to reflect on the executed plan and respond or create a new plan."""
 
     NextNodeT = Literal[executor_node_name, response_processor_node_name]  # type: ignore
@@ -28,7 +28,7 @@ def build_reflector_node(
     async def ainvoke(
         state: schemas.PlannerState,
         config: lc_config.RunnableConfig,
-    ) -> lg_types.Command[NextNodeT]:  # type: ignore
+    ) -> lg_types.Command[NextNodeT]:
         """
         Asynchronously reflects on the executed plan and determines the next action.
 

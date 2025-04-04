@@ -4,9 +4,9 @@
 
 # Configure defaults using the seed project.
 provider "google" {
-  project               = var.seed_project_id
+  # project               = var.seed_project_id
   region                = var.region
   zone                  = var.zone
-  billing_project       = var.seed_project_id
+  # billing_project       = var.seed_project_id
   user_project_override = true
 }

@@ -6,38 +6,38 @@
 module "concierge_server_service_account" {
   source     = "terraform-google-modules/service-accounts/google"
   version    = "~> 4.5"
-  project_id = module.project-factory.project_id
+  project_id = google_project.demo_project.project_id
   names      = [local.concierge_server_service_account_name]
   project_roles = [
-    "${module.project-factory.project_id}=>roles/secretmanager.secretAccessor",
-    "${module.project-factory.project_id}=>roles/bigquery.user",
-    "${module.project-factory.project_id}=>roles/bigquery.connectionUser",
-    "${module.project-factory.project_id}=>roles/aiplatform.user",
+    "${google_project.demo_project.project_id}=>roles/secretmanager.secretAccessor",
+    "${google_project.demo_project.project_id}=>roles/bigquery.user",
+    "${google_project.demo_project.project_id}=>roles/bigquery.connectionUser",
+    "${google_project.demo_project.project_id}=>roles/aiplatform.user",
   ]
-  depends_on = [module.project-factory]
+  depends_on = [google_project.demo_project]
 }
 
 # Frontend demo service account.
 module "concierge_app_engine_service_account" {
   source     = "terraform-google-modules/service-accounts/google"
   version    = "~> 4.5"
-  project_id = module.project-factory.project_id
+  project_id = google_project.demo_project.project_id
   names      = [local.concierge_app_engine_service_account_name]
   project_roles = [
-    "${module.project-factory.project_id}=>roles/cloudbuild.builds.builder",
-    "${module.project-factory.project_id}=>roles/iam.serviceAccountTokenCreator",
+    "${google_project.demo_project.project_id}=>roles/cloudbuild.builds.builder",
+    "${google_project.demo_project.project_id}=>roles/iam.serviceAccountTokenCreator",
   ]
-  depends_on = [module.project-factory]
+  depends_on = [google_project.demo_project]
 }
 
 # Cloud Build service account.
 module "concierge_build_service_account" {
   source     = "terraform-google-modules/service-accounts/google"
   version    = "~> 4.5"
-  project_id = module.project-factory.project_id
+  project_id = google_project.demo_project.project_id
   names      = [local.concierge_build_service_account_name]
   project_roles = [
-    "${module.project-factory.project_id}=>roles/cloudbuild.builds.builder",
+    "${google_project.demo_project.project_id}=>roles/cloudbuild.builds.builder",
   ]
-  depends_on = [module.project-factory]
+  depends_on = [google_project.demo_project]
 }

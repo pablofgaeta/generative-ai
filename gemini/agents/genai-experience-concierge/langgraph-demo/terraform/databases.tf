@@ -24,7 +24,7 @@ module "alloy-db" {
 
   cluster_id           = local.alloy_db_cluster_id
   cluster_location     = var.region
-  project_id           = module.project-factory.project_id
+  project_id           = google_project.demo_project.project_id
   cluster_labels       = {}
   cluster_display_name = ""
 
@@ -47,14 +47,14 @@ module "alloy-db" {
     display_name      = "Primary instance for storing the concierge demo session data."
   }
 
-  depends_on = [module.project-factory, module.vpc, google_service_networking_connection.google_services_connection]
+  depends_on = [google_project.demo_project, module.vpc, google_service_networking_connection.google_services_connection]
 }
 
 # Add the postgres connection string for the AlloyDB instance as a secret to be used by the backend server.
 module "secret-manager" {
   source     = "GoogleCloudPlatform/secret-manager/google"
   version    = "~> 0.8"
-  project_id = module.project-factory.project_id
+  project_id = google_project.demo_project.project_id
   secrets = [
     {
       name        = local.alloy_db_connection_secret_name
@@ -68,7 +68,7 @@ module "secret-manager" {
 
 # Create a BigQuery dataset for the mock Cymbal Retail data and embedding model.
 resource "google_bigquery_dataset" "cymbal_retail_dataset" {
-  project       = module.project-factory.project_id
+  project       = google_project.demo_project.project_id
   dataset_id    = local.cymbal_dataset_id
   friendly_name = "Cymbal Retail Mock Dataset"
   description   = "This is a mock dataset containing fake retail data. Used for grounding a Gen AI chat application."
@@ -87,7 +87,7 @@ resource "google_bigquery_dataset" "cymbal_retail_dataset" {
 
 # Create a remote Cloud Resource Connection to enable access to BQML Embedding models
 resource "google_bigquery_connection" "cymbal_connection" {
-  project       = module.project-factory.project_id
+  project       = google_project.demo_project.project_id
   connection_id = local.cymbal_dataset_connection_id
   location      = var.bigquery_dataset_location
   cloud_resource {}
@@ -96,7 +96,7 @@ resource "google_bigquery_connection" "cymbal_connection" {
 # Add the BigQuery Connection Service Account as a Vertex AI User. Enables creation of embedding models.
 # Note: If this fails during initial creation, wait a few minutes and try again as it may take a few minutes for the Service Account to be created.
 resource "google_project_iam_member" "cymbal_connection_vertex_user" {
-  project = module.project-factory.project_id
+  project = google_project.demo_project.project_id
   role    = "roles/aiplatform.user"
 
   member = "serviceAccount:${google_bigquery_connection.cymbal_connection.cloud_resource[0].service_account_id}"

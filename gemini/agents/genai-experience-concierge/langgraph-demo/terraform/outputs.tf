@@ -3,7 +3,7 @@
 # agreement with Google.
 
 output "project-id" {
-  value = module.project-factory.project_id
+  value = google_project.demo_project.project_id
 }
 
 output "concierge-alloydb-connection-secret-name" {

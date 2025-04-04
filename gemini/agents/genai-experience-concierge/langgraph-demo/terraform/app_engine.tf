@@ -6,9 +6,9 @@
 resource "google_iap_brand" "project_brand" {
   support_email     = var.iap_support_email
   application_title = var.application_title
-  project           = module.project-factory.project_id
+  project           = google_project.demo_project.project_id
 
-  depends_on = [module.project-factory]
+  depends_on = [google_project.demo_project]
 }
 
 # Create a demo IAP client for the Oauth Consent Screen.
@@ -16,12 +16,12 @@ resource "google_iap_client" "project_client" {
   display_name = "${var.application_title} Client"
   brand        = google_iap_brand.project_brand.name
 
-  depends_on = [module.project-factory]
+  depends_on = [google_project.demo_project]
 }
 
 # Initialize the App Engine Application with IAP configured.
 resource "google_app_engine_application" "app_engine" {
-  project     = module.project-factory.project_id
+  project     = google_project.demo_project.project_id
   location_id = var.app_engine_location
 
   iap {
@@ -30,7 +30,7 @@ resource "google_app_engine_application" "app_engine" {
     oauth2_client_secret = google_iap_client.project_client.secret
   }
 
-  depends_on = [module.project-factory]
+  depends_on = [google_project.demo_project]
 }
 
 # Policy for allow-listing the demo users.
@@ -48,7 +48,7 @@ resource "google_iap_web_type_app_engine_iam_policy" "app_engine_iap_policy" {
 
   policy_data = data.google_iam_policy.app_engine_access_policy.policy_data
 
-  depends_on = [module.project-factory]
+  depends_on = [google_project.demo_project]
 }
 
 # Configure IAP settings for the App Engine Application.

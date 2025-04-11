@@ -24,6 +24,7 @@ dev = [
     "types-pyyaml>=6.0.12.20241230",
     "pip>=25.0.1",
     "pylint>=3.3.6",
+    "google-adk>=0.1.0",
 ]
 
 [build-system]

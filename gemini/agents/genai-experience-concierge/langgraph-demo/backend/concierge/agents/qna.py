@@ -3,8 +3,9 @@
 # agreement with Google.
 """Multi-turn RAG chat agent for the Concierge demo."""
 
+from langgraph.store import base as store_base
 from concierge import schemas, settings, utils
-from concierge.langgraph_server import store, langgraph_agent
+from concierge.langgraph_server import langgraph_agent
 from concierge.nodes import chat, save_turn
 from concierge.tools import retrieval
 
@@ -20,16 +21,15 @@ you were unable to find enough information to provide an informed response.
 
 
 def load_agent(
+    store: store_base.BaseStore,
     runtime_settings: settings.RuntimeSettings,
 ) -> langgraph_agent.LangGraphAgent:
     """Loads the function calling chat agent for the Concierge demo."""
 
-    index_store = store.load_store(backend_config=runtime_settings.store)
-
     fd, fn = retrieval.generate_langgraph_retriever(
         name="search",
         description="Search for documents to ground the response.",
-        store=index_store,
+        store=store,
         document_namespace=runtime_settings.retrieval_namespace,
         document_text_field=runtime_settings.retrieval_document_text_field,
     )

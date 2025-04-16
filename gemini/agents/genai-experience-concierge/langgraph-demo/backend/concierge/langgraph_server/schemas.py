@@ -38,6 +38,9 @@ class PostgresBackendConfig(pydantic.BaseModel):
 CheckpointerConfig = MemoryBackendConfig | SQLiteBackendConfig | PostgresBackendConfig
 """Union type for checkpoint backend configurations."""
 
+StoreConfig = MemoryBackendConfig | PostgresBackendConfig
+"""Union type for store backend configurations."""
+
 
 # pylint: disable=too-many-arguments,too-many-positional-arguments
 class LangGraphAgent(Protocol):

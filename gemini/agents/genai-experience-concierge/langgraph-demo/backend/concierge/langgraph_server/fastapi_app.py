@@ -3,10 +3,13 @@
 # agreement with Google.
 """FastAPI router for the langgraph-server package."""
 
+import datetime
 from typing import (
+    Annotated,
     Any,
     AsyncGenerator,
     AsyncIterator,
+    Literal,
     Optional,
     Sequence,
     TypeVar,
@@ -17,6 +20,7 @@ from concierge.langgraph_server import schemas
 import fastapi
 from fastapi import responses
 from langgraph_sdk import schema
+from langgraph.store import base as store_base
 import pydantic
 
 _T = TypeVar("_T")
@@ -131,6 +135,86 @@ class ThreadRunBody(StatelessRunBody):
     """The checkpoint to start the thread from."""
 
 
+class StorePutBody(pydantic.BaseModel):
+    """Request body for putting an item into a store."""
+
+    namespace: tuple[str, ...]
+    """The namespace of the item."""
+    key: str
+    """The key of the item."""
+    value: dict
+    """The value of the item."""
+    index: list[str] | Literal[False] | None = pydantic.Field(
+        default=None,
+        examples=[None],
+    )
+    """The index of the item."""
+    ttl: float | None = pydantic.Field(
+        default=None,
+        examples=[None],
+    )
+    """The time-to-live of the item."""
+
+
+class StoreDeleteBody(pydantic.BaseModel):
+    """Request body for getting an item from a store."""
+
+    namespace: tuple[str, ...]
+    """The namespace of the item."""
+    key: str
+    """The key of the item."""
+
+
+class StoreSearchBody(pydantic.BaseModel):
+    """Request body for searching a store."""
+
+    namespace_prefix: tuple[str, ...]
+    """The namespace prefix to search for."""
+    filter: dict[str, Any] | None = pydantic.Field(
+        default=None,
+        examples=[None],
+    )
+    """The filter to apply to the search."""
+    limit: int = pydantic.Field(
+        default=10,
+        examples=[10],
+    )
+    """The maximum number of items to return."""
+    offset: int = pydantic.Field(
+        default=0,
+        examples=[0],
+    )
+    """The offset to start the search from"""
+
+
+class StoreNamespaceSearchBody(pydantic.BaseModel):
+    prefix: tuple[str, ...] | None = pydantic.Field(
+        default=None,
+        examples=[None],
+    )
+    """The prefix to search for."""
+    suffix: tuple[str, ...] | None = pydantic.Field(
+        default=None,
+        examples=[None],
+    )
+    """The suffix to search for."""
+    max_depth: int | None = pydantic.Field(
+        default=None,
+        examples=[None],
+    )
+    """The maximum depth to search for."""
+    limit: int = pydantic.Field(
+        default=100,
+        examples=[100],
+    )
+    """The maximum number of items to return."""
+    offset: int = pydantic.Field(
+        default=0,
+        examples=[0],
+    )
+    """The offset to start the search from"""
+
+
 def build_agent_router(
     agent: schemas.SerializableLangGraphAgent,
     router: fastapi.APIRouter,
@@ -195,6 +279,115 @@ def build_agent_router(
     )
 
     return router
+
+
+def build_store_router(
+    store: store_base.BaseStore,
+    router: fastapi.APIRouter,
+) -> fastapi.APIRouter:
+    """
+    Builds a FastAPI router for a store.
+    """
+
+    route_adaptor = StoreFastAPIRouteAdaptor(store=store)
+
+    router.add_api_route(
+        "/store/items",
+        route_adaptor.put,
+        methods=["PUT"],
+    )
+
+    router.add_api_route(
+        "/store/items",
+        route_adaptor.delete,
+        methods=["DELETE"],
+    )
+
+    router.add_api_route(
+        "/store/items",
+        route_adaptor.get,
+        methods=["GET"],
+    )
+
+    router.add_api_route(
+        "/store/items/search",
+        route_adaptor.search,
+        methods=["POST"],
+    )
+
+    router.add_api_route(
+        "/store/namespaces",
+        route_adaptor.namespaces,
+        methods=["POST"],
+    )
+
+    return router
+
+
+class StoreItem(pydantic.BaseModel):
+    namespace: tuple[str]
+    key: str
+    value: dict
+    created_at: datetime.datetime
+    updated_at: datetime.datetime
+
+
+class StoreFastAPIRouteAdaptor:
+    """
+    Adaptor class for mapping store methods to FastAPI routes.
+    """
+
+    def __init__(self, store: store_base.BaseStore):
+        self.store = store
+
+    async def put(self, body: StorePutBody) -> int:
+        await self.store.aput(
+            namespace=body.namespace,
+            key=body.key,
+            value=body.value,
+            index=body.index,
+            ttl=body.ttl,
+        )
+
+        return 204
+
+    async def delete(self, body: StoreDeleteBody) -> int:
+        await self.store.adelete(namespace=body.namespace, key=body.key)
+
+        return 204
+
+    async def get(
+        self,
+        namespace: Annotated[tuple[str, ...], fastapi.Query()],
+        key: str,
+    ) -> StoreItem:
+        item = await self.store.aget(namespace=namespace, key=key, refresh_ttl=False)
+
+        if item:
+            return StoreItem.model_validate(item.dict())
+
+        # Not sure why but LangGraph Cloud API expects 400, not 404
+        raise fastapi.HTTPException(status_code=400, detail="Item not found.")
+
+    async def search(self, body: StoreSearchBody) -> list[StoreItem]:
+        items = await self.store.asearch(
+            body.namespace_prefix,
+            filter=body.filter,
+            limit=body.limit,
+            offset=body.offset,
+            refresh_ttl=False,
+        )
+        response_items = [StoreItem.model_validate(item.dict()) for item in items]
+        return response_items
+
+    async def namespaces(self, body: StoreNamespaceSearchBody) -> list[tuple[str]]:
+        return await self.store.alist_namespaces(
+            prefix=body.prefix,
+            suffix=body.suffix,
+            max_depth=body.max_depth,
+            limit=body.limit,
+            offset=body.offset,
+        )
 
 
 class LangGraphFastAPIRouteAdaptor:

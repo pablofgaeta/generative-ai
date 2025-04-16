@@ -9,6 +9,21 @@ from concierge import schemas as concierge_schemas
 import pydantic
 
 
+# Document Search
+
+
+class RetrievedDocument(pydantic.BaseModel):
+    text: str
+    score: float
+
+
+class DocumentSearchResult(pydantic.BaseModel):
+    documents: list[RetrievedDocument]
+
+
+# BigQuery Search
+
+
 class Store(pydantic.BaseModel):
     """Represents a store with its details."""
 
@@ -108,7 +123,7 @@ class InventorySearchResult(pydantic.BaseModel):
     """Error message, if any."""
 
 
-class FunctionCallingTurn(concierge_schemas.BaseTurn, total=False):
+class FunctionCallingTurn(concierge_schemas.BaseTurn):
     """Represents a single turn in a conversation."""
 
     user_latitude: float | None

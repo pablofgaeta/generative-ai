@@ -5,6 +5,7 @@
 
 import asyncio
 import inspect
+import itertools
 import logging
 from typing import (
     Any,
@@ -30,6 +31,48 @@ logger = logging.getLogger(__name__)
 
 P = ParamSpec("P")
 T = TypeVar("T")
+
+
+def create_retriever(
+    model: str,
+    batch_size: int,
+    dimensionality: int,
+    client: genai.Client,
+) -> Callable[[list[str]], Awaitable[list[list[float]]]]:
+    async def embed_content_for_retrieval(
+        docs: list[str],
+    ) -> list[list[float]]:
+        batch_embedding_futures = [
+            client.aio.models.embed_content(
+                model=model,
+                contents=query_batch,
+                config=genai_types.EmbedContentConfig(
+                    task_type="RETRIEVAL_QUERY",
+                    output_dimensionality=dimensionality,
+                    auto_truncate=False,
+                ),
+            )
+            for query_batch in itertools.batched(docs, n=batch_size)
+        ]
+
+        embedding_batches = await asyncio.gather(*batch_embedding_futures)
+
+        embeddings = [
+            embedding.values
+            for batch in embedding_batches
+            for embedding in batch.embeddings or []
+            if embedding.values is not None
+        ]
+
+        if len(embeddings) != len(docs):
+            raise ValueError(
+                "Count of valid embeddings doesn't match the number of input docs."
+                f"Expected: {len(docs)}. Received: {len(embeddings)}"
+            )
+
+        return embeddings
+
+    return embed_content_for_retrieval
 
 
 def load_graph(
@@ -133,12 +176,12 @@ async def generate_content_stream(
         logger.warning("Maximum depth reached, stopping generation.")
         return
 
-    response: AsyncIterator[genai_types.GenerateContentResponse] = (
-        await client.aio.models.generate_content_stream(
-            model=model,
-            contents=contents,
-            config=config,
-        )
+    response: AsyncIterator[
+        genai_types.GenerateContentResponse
+    ] = await client.aio.models.generate_content_stream(
+        model=model,
+        contents=contents,
+        config=config,
     )
 
     # iterate over chunk in main request

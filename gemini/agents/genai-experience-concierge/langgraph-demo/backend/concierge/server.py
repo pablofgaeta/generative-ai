@@ -6,7 +6,7 @@
 import contextlib
 from typing import AsyncGenerator
 
-from concierge import settings
+from concierge import settings, utils
 from concierge.agents import (
     function_calling,
     gemini,
@@ -14,12 +14,37 @@ from concierge.agents import (
     semantic_router,
     task_planner,
 )
-from concierge.langgraph_server import fastapi_app
+from google import genai
+from concierge.langgraph_server import fastapi_app, store
 import fastapi
 
 # Build compiled LangGraph agents with optional checkpointer based on config
 
 runtime_settings = settings.RuntimeSettings()
+
+index_store = store.load_store(
+    backend_config=runtime_settings.store,
+    index={
+        "dims": 768,
+        "embed": utils.create_retriever(
+            model=runtime_settings.embedding_model_name,
+            batch_size=10,
+            dimensionality=768,
+            client=genai.Client(
+                vertexai=True,
+                project=runtime_settings.project,
+                location=runtime_settings.region,
+            ),
+        ),
+        "fields": [runtime_settings.retrieval_document_text_field],
+    },
+    ttl=(
+        runtime_settings.retrieval_ttl.model_dump(mode="json")
+        if runtime_settings.retrieval_ttl
+        else None
+    ),
+)
+
 gemini_agent = gemini.load_agent(runtime_settings=runtime_settings)
 guardrails_agent = guardrails.load_agent(runtime_settings=runtime_settings)
 function_calling_agent = function_calling.load_agent(runtime_settings=runtime_settings)
@@ -38,8 +63,11 @@ async def lifespan(_app: fastapi.FastAPI) -> AsyncGenerator[None, None]:
     await function_calling_agent.setup()
     await semantic_router_agent.setup()
     await task_planner_agent.setup()
+    await store.setup_store(index_store)
 
     yield
+
+    await store.cleanup_store(index_store)
 
 
 app = fastapi.FastAPI(lifespan=lifespan)
@@ -56,6 +84,18 @@ async def health() -> int:
     """Health endpoint."""
     return 200
 
+
+# register store router
+
+app.include_router(
+    router=fastapi_app.build_store_router(
+        store=index_store,
+        router=fastapi.APIRouter(
+            prefix="/store",
+            tags=["Store"],
+        ),
+    )
+)
 
 # register agent routers
 

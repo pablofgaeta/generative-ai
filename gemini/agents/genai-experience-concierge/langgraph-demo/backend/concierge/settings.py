@@ -10,10 +10,20 @@ import pydantic
 import pydantic_settings
 
 
+class StoreTTLConfig(pydantic.BaseModel):
+    default_ttl: float | None = None
+    refresh_on_read: bool = False
+    sweep_interval_minutes: int | None = None
+
+
 class RuntimeSettings(pydantic_settings.BaseSettings):
     """Runtime settings for the LangGraph agents."""
 
     checkpointer: schemas.CheckpointerConfig = pydantic.Field(
+        default_factory=schemas.MemoryBackendConfig
+    )
+
+    store: schemas.StoreConfig = pydantic.Field(
         default_factory=schemas.MemoryBackendConfig
     )
 
@@ -38,6 +48,10 @@ class RuntimeSettings(pydantic_settings.BaseSettings):
     executor_model_name: str = "gemini-2.0-flash-001"
     reflector_model_name: str = "gemini-2.0-flash-001"
     max_router_turn_history: int = 3
+    retrieval_namespace: tuple[str] = ("docs",)
+    retrieval_document_text_field: str = "text"
+    retrieval_ttl: StoreTTLConfig | None = None
+    embedding_model_name: str = "text-embedding-005"
 
     model_config = pydantic_settings.SettingsConfigDict(
         env_prefix="concierge_",

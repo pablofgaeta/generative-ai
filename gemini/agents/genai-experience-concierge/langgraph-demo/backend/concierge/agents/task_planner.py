@@ -46,7 +46,7 @@ def load_agent(
                 planner_model_name=runtime_settings.planner_model_name,
                 executor_model_name=runtime_settings.executor_model_name,
                 reflector_model_name=runtime_settings.reflector_model_name,
-            )
+            ).model_dump(mode="json")
         },
         checkpointer_config=runtime_settings.checkpointer,
     )

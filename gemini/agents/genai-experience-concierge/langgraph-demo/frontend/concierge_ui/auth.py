@@ -9,7 +9,7 @@ from google.auth import compute_engine, impersonated_credentials
 from google.auth.transport import requests
 
 
-def get_auth_headers(agent_config: settings.RemoteAgentConfig) -> dict[str, str]:
+def get_auth_headers(agent_config: settings.RemoteConfig) -> dict[str, str]:
     """
     Retrieves authentication headers for making requests to a remote agent.
     """

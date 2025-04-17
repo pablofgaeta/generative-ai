@@ -5,6 +5,7 @@
 
 from typing import Callable, NamedTuple, Protocol, TypedDict
 
+from langchain_core.runnables import config as lc_config
 from google.genai import types as genai_types
 import pydantic
 
@@ -43,9 +44,6 @@ class BaseTurn(TypedDict, total=False):
     user_input: str
     """The user's input for this turn."""
 
-    user_location: Coordinate | None
-    """The user's location for this turn, if any."""
-
     response: str
     """The agent's response for this turn, if any."""
 
@@ -63,5 +61,5 @@ class FunctionSpec(NamedTuple):
 class RuntimeFunctionSpecLoader(Protocol):  # pylint: disable=too-few-public-methods
     """Protocol for a function specification loader."""
 
-    def __call__(self, turn: BaseTurn) -> list[FunctionSpec]:
-        """Load a list of function specs dynamically at runtime based on the current turn."""
+    def __call__(self, config: lc_config.RunnableConfig) -> list[FunctionSpec]:
+        """Load a list of function specs dynamically at runtime based on the runtime config."""

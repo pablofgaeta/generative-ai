@@ -37,7 +37,7 @@ index_store = store.load_store(
                 location=runtime_settings.region,
             ),
         ),
-        "fields": [runtime_settings.retrieval_document_text_field],
+        "fields": [runtime_settings.retrieval_text_field],
     },
     ttl=(
         runtime_settings.retrieval_ttl.model_dump(mode="json")
@@ -95,7 +95,7 @@ app.include_router(
     router=fastapi_app.build_store_router(
         store=index_store,
         router=fastapi.APIRouter(
-            prefix="/store",
+            prefix="/default_store",
             tags=["Store"],
         ),
     )

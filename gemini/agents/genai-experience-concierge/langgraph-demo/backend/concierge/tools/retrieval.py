@@ -3,8 +3,7 @@
 # agreement with Google.
 """Search for documents in a LangGraph Store index."""
 
-from typing import Callable, Awaitable
-
+from concierge import schemas as concierge_schemas
 from langgraph.store import base
 from concierge.tools import schemas
 from google.genai import types as genai_types
@@ -15,11 +14,8 @@ def generate_langgraph_retriever(
     description: str,
     store: base.BaseStore,
     document_text_field: str,
-    document_namespace: tuple[str],
-) -> tuple[
-    genai_types.FunctionDeclaration,
-    Callable[[str, list[str]], Awaitable[schemas.DocumentSearchResult]],
-]:
+    document_namespace: tuple[str, ...],
+) -> concierge_schemas.FunctionSpec:
     retriever_fd = genai_types.FunctionDeclaration(
         response=None,
         description=description,
@@ -60,4 +56,4 @@ def generate_langgraph_retriever(
 
         return schemas.DocumentSearchResult(documents=documents)
 
-    return retriever_fd, search
+    return concierge_schemas.FunctionSpec(fd=retriever_fd, callable=search)

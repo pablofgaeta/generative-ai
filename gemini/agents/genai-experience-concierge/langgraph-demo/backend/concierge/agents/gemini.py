@@ -38,7 +38,7 @@ this is just for the purposes of a demo.
                 project=runtime_settings.project,
                 region=runtime_settings.region,
                 chat_model_name=runtime_settings.chat_model_name,
-            ),
+            ).model_dump(mode="json"),
         },
         checkpointer_config=runtime_settings.checkpointer,
     )

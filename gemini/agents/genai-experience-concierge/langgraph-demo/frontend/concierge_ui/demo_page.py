@@ -36,6 +36,16 @@ class ChatHandler(Protocol):  # pylint: disable=too-few-public-methods
         """
 
 
+class DemoBuilder(Protocol):
+    """Protocol defining the interface for a demo builder.
+
+    This protocol was added to enable more complex demo functionality besides streaming chat responses.
+    """
+
+    def __call__(self, demo_id: str) -> None:
+        """Generate a streamlit demo given a unique demo ID."""
+
+
 def build_demo_page(
     title: str,
     icon: str,
@@ -57,7 +67,7 @@ def build_demo_page(
         headers=auth.get_auth_headers(config),
     )
 
-    st.set_page_config(page_title=title, page_icon=icon)
+    st.set_page_config(page_title=title, page_icon=icon, layout="wide")
     st.title(title)
     st.sidebar.header(title)
 
@@ -106,6 +116,28 @@ def build_demo_page(
             )
 
         # Add assistant response to chat history
-        st.session_state[messages_key].append(
-            {"role": "assistant", "content": response}
-        )
+        st.session_state[messages_key].append({"role": "assistant", "content": response})
+
+
+def build_generic_demo_page(
+    title: str,
+    icon: str,
+    demo_id: str,
+    description: str,
+    demo_builder: DemoBuilder,
+) -> None:
+    """
+    Builds a custom demo page for a chat application using Streamlit.
+
+    Args:
+        demo_builder: A callable that builds custom demo content.
+    """
+
+    st.set_page_config(page_title=title, page_icon=icon, layout="wide")
+    st.title(title)
+    st.sidebar.header(title)
+
+    if description:
+        st.markdown(description)
+
+    demo_builder(demo_id=demo_id)

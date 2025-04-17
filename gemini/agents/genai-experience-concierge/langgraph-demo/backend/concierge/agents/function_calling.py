@@ -3,6 +3,7 @@
 # agreement with Google.
 """Function calling chat agent for the Concierge demo."""
 
+import pydantic
 from concierge import schemas, settings, utils
 from concierge.langgraph_server import langgraph_agent
 from concierge.nodes import chat, save_turn
@@ -26,6 +27,10 @@ It can be retrieved in the background for the store search radius.
 # pylint: enable=line-too-long
 
 
+class FunctionCallingConfig(pydantic.BaseModel):
+    user_coordinate: schemas.Coordinate | None = None
+
+
 def load_agent(
     runtime_settings: settings.RuntimeSettings,
 ) -> langgraph_agent.LangGraphAgent:
@@ -35,8 +40,10 @@ def load_agent(
         node_name="chat",
         next_node="save-turn",
         system_prompt=FUNCTION_CALLING_SYSTEM_PROMPT,
-        function_spec_loader=lambda turn: load_function_specs(
-            turn=turn,
+        function_spec_loader=lambda config: load_function_specs(
+            config=FunctionCallingConfig.model_validate(
+                config.get("configurable", {}).get("fc_config", {})
+            ),
             runtime_settings=runtime_settings,
         ),
     )
@@ -54,7 +61,7 @@ def load_agent(
                 project=runtime_settings.project,
                 region=runtime_settings.region,
                 chat_model_name=runtime_settings.chat_model_name,
-            ),
+            ).model_dump(mode="json"),
         },
         checkpointer_config=runtime_settings.checkpointer,
     )
@@ -63,7 +70,7 @@ def load_agent(
 
 
 def load_function_specs(
-    turn: schemas.BaseTurn,
+    config: FunctionCallingConfig,
     runtime_settings: settings.RuntimeSettings,
 ) -> list[schemas.FunctionSpec]:
     """Load a list of function specs containing function declarations and callable handlers."""
@@ -73,14 +80,12 @@ def load_function_specs(
     assert runtime_settings.cymbal_inventory_table_uri is not None
     assert runtime_settings.cymbal_embedding_model_uri is not None
 
-    user_coordinate = turn.get("user_location")
-
     find_stores_handler = find_stores.generate_find_stores_handler(
         project=runtime_settings.project,
         cymbal_dataset_location=runtime_settings.cymbal_dataset_location,
         cymbal_stores_table_uri=runtime_settings.cymbal_stores_table_uri,
         cymbal_inventory_table_uri=runtime_settings.cymbal_inventory_table_uri,
-        user_coordinate=user_coordinate,
+        user_coordinate=config.user_coordinate,
     )
     find_stores_fd = find_stores.find_stores_fd
     assert (

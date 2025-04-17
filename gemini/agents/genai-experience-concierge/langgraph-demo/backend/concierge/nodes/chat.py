@@ -36,6 +36,12 @@ class ChatConfig(pydantic.BaseModel):
     """The Google Cloud region."""
     chat_model_name: str
     """The name of the Gemini chat model."""
+    system_prompt: str | None = None
+    """A custom system prompt to inject to the LLM call."""
+    temperature: float = 0.6
+    """The temperature to use for the chat model."""
+    disable_tools: bool = False
+    """Whether to disable tools for the chat model."""
 
 
 def build_chat_node(
@@ -81,7 +87,7 @@ def build_chat_node(
 
         function_specs = []
         if function_spec_loader:
-            function_specs = function_spec_loader(turn=current_turn)
+            function_specs = function_spec_loader(config)
 
         # Initialize generate model
         client = genai.Client(
@@ -94,7 +100,7 @@ def build_chat_node(
         new_contents = [utils.load_user_content(current_turn=current_turn)]
         try:
             tools = []
-            if function_specs:
+            if function_specs and not chat_config.disable_tools:
                 tools = [
                     genai_types.Tool(
                         function_declarations=[spec.fd for spec in function_specs],
@@ -110,9 +116,9 @@ def build_chat_node(
                 ]
                 + new_contents,
                 config=genai_types.GenerateContentConfig(
-                    system_instruction=system_prompt,
+                    system_instruction=chat_config.system_prompt or system_prompt,
                     tools=tools,
-                    temperature=0.6,
+                    temperature=chat_config.temperature,
                     candidate_count=1,
                     seed=42,
                     automatic_function_calling=genai_types.AutomaticFunctionCallingConfig(

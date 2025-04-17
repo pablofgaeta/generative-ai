@@ -35,13 +35,15 @@ def chat_handler(
     """
     current_source = last_source = None
     for _, chunk in graph.stream(
-        input={
-            "current_turn": {
-                "user_input": message,
-                "user_location": {"latitude": 44.6508262, "longitude": -63.6408055},
+        input={"current_turn": {"user_input": message}},
+        config={
+            "configurable": {
+                "thread_id": thread_id,
+                "fc_config": {
+                    "user_coordinate": {"latitude": 44.6508262, "longitude": -63.6408055}
+                },
             }
         },
-        config={"configurable": {"thread_id": thread_id}},
         stream_mode=["custom"],
     ):
         assert isinstance(chunk, dict), "Expected dictionary chunk"

@@ -4,6 +4,7 @@
 """Implementation of LangGraphAgent given a StateGraph."""
 
 import logging
+import copy
 from typing import Any, AsyncGenerator, Optional, Sequence, Union, cast
 
 from concierge.langgraph_server import checkpoint_saver, schemas
@@ -103,7 +104,7 @@ class LangGraphAgent:
         """
         configurable = {**checkpoint, "thread_id": thread_id}
         runnable_config = lc_config.RunnableConfig(configurable=configurable)
-        runnable_config = lc_config.merge_configs(self.config, runnable_config)
+        runnable_config = merge_dicts(runnable_config, copy.deepcopy(self.config))
 
         state_snapshot = await self.compiled_graph.aget_state(
             config=runnable_config,
@@ -131,7 +132,7 @@ class LangGraphAgent:
         runnable_config = lc_config.RunnableConfig(
             configurable={"thread_id": thread_id}
         )
-        runnable_config = lc_config.merge_configs(self.config, runnable_config)
+        runnable_config = merge_dicts(runnable_config, copy.deepcopy(self.config))
 
         state_snapshot = await self.compiled_graph.aget_state(
             config=runnable_config,
@@ -201,7 +202,7 @@ class LangGraphAgent:
         checkpoint_dict["thread_id"] = thread_id
 
         runnable_config = lc_config.ensure_config({"configurable": checkpoint_dict})
-        runnable_config = lc_config.merge_configs(self.config, runnable_config)
+        runnable_config = merge_dicts(runnable_config, copy.deepcopy(self.config))
 
         checkpoint_config = await self.compiled_graph.aupdate_state(
             config=runnable_config,
@@ -261,7 +262,7 @@ class LangGraphAgent:
         if config is not None and "recursion_limit" in config:
             runnable_config["recursion_limit"] = runnable_config["recursion_limit"]
 
-        runnable_config = lc_config.merge_configs(self.config, runnable_config)
+        runnable_config = merge_dicts(runnable_config, copy.deepcopy(self.config))
 
         stream_input: Optional[Union[dict, schema.Command]] = input
         if command is not None:
@@ -378,3 +379,20 @@ def _pregel_task_to_thread_task(task: lg_types.PregelTask) -> schema.ThreadTask:
         state=state,
         result=task.result,
     )
+
+
+def merge_dicts(a: dict, b: dict, error_on_conflict: bool = False) -> dict:
+    """Merge b into a. By default, leaves of b will take precedence.
+
+    Set error_on_conflict to raise an exception for any conflicting leaves.
+    """
+
+    for k in b:
+        if k not in a:
+            a[k] = b[k]
+        elif isinstance(a[k], dict) and isinstance(b[k], dict):
+            merge_dicts(a[k], b[k], error_on_conflict)
+        elif a[k] != b[k] and error_on_conflict:
+            raise ValueError(f"Conflict at key {k}")
+
+    return a

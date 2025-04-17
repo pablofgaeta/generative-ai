@@ -94,8 +94,7 @@ def _stringify_plan(plan: dict, include_results: bool = True) -> str:
         str: The formatted execution plan string.
     """
     tasks_str = "\n\n".join(
-        f"**Task #{idx + 1}**\n\n"
-        + _stringify_task(task, include_results=include_results)
+        f"**Task #{idx + 1}**\n\n" + _stringify_task(task, include_results=include_results)
         for idx, task in enumerate(plan["tasks"])
     )
 

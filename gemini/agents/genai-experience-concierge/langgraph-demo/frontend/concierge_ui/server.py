@@ -3,6 +3,8 @@
 # agreement with Google.
 """Streamlit demo home page."""
 
+import functools
+
 from concierge_ui import demo_page, remote_settings
 from concierge_ui.agents import (
     function_calling,
@@ -10,6 +12,7 @@ from concierge_ui.agents import (
     gemini_chat_with_guardrails,
     semantic_router,
     task_planner,
+    qna,
 )
 import streamlit as st
 
@@ -123,6 +126,29 @@ The "Executor" agent in this demo is a Gemini model equipped with the Google Sea
     url_path="task-planner",
 )
 
+sxs_demo = st.Page(
+    lambda: demo_page.build_generic_demo_page(
+        title="SxS Chat",
+        icon="⚖️",
+        demo_id="sxs-chat",
+        description="""
+This demo demonstrates multi-turn RAG via function calling tool use. You may upload up to **X** PDF documents and chat with them, optionally generating side-by-side responses to compare different model versions. Text will be extracted from the documents and accessible in this session for an hour.
+
+The vector store is implemented using a LangGraph Store instance. You can learn more about LangGraph Store [here](https://langchain-ai.github.io/langgraph/reference/store/).
+""".strip(),
+        demo_builder=functools.partial(
+            qna.demo_builder,
+            namespace_prefix=settings.qna_store_namespace,
+            store_config=settings.store,
+            left_config=settings.qna,
+            right_config=settings.qna,
+        ),
+    ),
+    title="SxS RAG",
+    icon="⚖️",
+    url_path="qna-rag",
+)
+
 
 pg = st.navigation(
     [
@@ -132,6 +158,7 @@ pg = st.navigation(
         semantic_router_page,
         function_calling_page,
         task_planner_page,
+        sxs_demo,
     ]
 )
 pg.run()

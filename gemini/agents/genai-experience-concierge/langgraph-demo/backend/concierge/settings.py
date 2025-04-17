@@ -48,8 +48,7 @@ class RuntimeSettings(pydantic_settings.BaseSettings):
     executor_model_name: str = "gemini-2.0-flash-001"
     reflector_model_name: str = "gemini-2.0-flash-001"
     max_router_turn_history: int = 3
-    retrieval_namespace: tuple[str] = ("docs",)
-    retrieval_document_text_field: str = "text"
+    retrieval_text_field: str = "text"
     retrieval_ttl: StoreTTLConfig | None = None
     embedding_model_name: str = "text-embedding-005"
 

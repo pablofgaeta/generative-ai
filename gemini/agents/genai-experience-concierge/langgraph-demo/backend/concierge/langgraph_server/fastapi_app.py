@@ -325,7 +325,7 @@ def build_store_router(
 
 
 class StoreItem(pydantic.BaseModel):
-    namespace: tuple[str]
+    namespace: tuple[str, ...]
     key: str
     value: dict
     created_at: datetime.datetime
@@ -380,7 +380,7 @@ class StoreFastAPIRouteAdaptor:
         response_items = [StoreItem.model_validate(item.dict()) for item in items]
         return response_items
 
-    async def namespaces(self, body: StoreNamespaceSearchBody) -> list[tuple[str]]:
+    async def namespaces(self, body: StoreNamespaceSearchBody) -> list[tuple[str, ...]]:
         return await self.store.alist_namespaces(
             prefix=body.prefix,
             suffix=body.suffix,

@@ -126,13 +126,13 @@ the Cymbal Retail company and their products/stores.
                 project=runtime_settings.project,
                 region=runtime_settings.region,
                 chat_model_name=runtime_settings.chat_model_name,
-            ),
+            ).model_dump(mode="json"),
             "router_config": router.RouterConfig(
                 project=runtime_settings.project,
                 region=runtime_settings.region,
                 router_model_name=runtime_settings.router_model_name,
                 max_router_turn_history=runtime_settings.max_router_turn_history,
-            ),
+            ).model_dump(mode="json"),
         },
         checkpointer_config=runtime_settings.checkpointer,
     )

@@ -42,7 +42,15 @@ spec:
               valueFrom:
                 secretKeyRef:
                   key: latest
-                  name: "{alloydb_secret_name}"
+                  name: "{alloydb_checkpointer_secret_name}"
+            
+            - name: CONCIERGE_STORE__TYPE
+              value: postgresql
+            - name: CONCIERGE_STORE__CONNECTION_URL
+              valueFrom:
+                secretKeyRef:
+                  key: latest
+                  name: "{alloydb_store_secret_name}"
 
             - name: CONCIERGE_PROJECT
               value: {project}

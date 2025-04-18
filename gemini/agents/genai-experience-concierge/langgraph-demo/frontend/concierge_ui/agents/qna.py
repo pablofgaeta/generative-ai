@@ -142,6 +142,8 @@ def demo_builder(
     with st.sidebar:
         st.header("📁 Document Setup")
         pdf_docs = st.file_uploader("Upload PDF files", accept_multiple_files=True)
+        chunk_size = st.number_input("Chunk Size", value=2000, key="chunk_size")
+        chunk_overlap = st.number_input("Chunk Overlap", value=200, key="chunk_overlap")
         if st.button("Index Documents"):
             if pdf_docs:
                 try:
@@ -149,6 +151,8 @@ def demo_builder(
                         for pdf in pdf_docs:
                             store.upload_pdf(
                                 pdf=pdf,
+                                chunk_size=chunk_size,
+                                chunk_overlap=chunk_overlap,
                                 namespace=session_namespace,
                                 config=store_config,
                             )

@@ -20,43 +20,36 @@ class PDFChunk(TypedDict):
 
 def upload_pdf(
     pdf: UploadedFile,
+    chunk_size: int,
+    chunk_overlap: int,
     namespace: tuple[str, ...],
     config: remote_settings.StoreConfig,
 ) -> None:
-    pdf_chunks = get_pdf_chunks(pdf)
+    pdf_chunks = get_pdf_chunks(pdf, chunk_size, chunk_overlap)
 
     client = httpx.Client(base_url=str(config.base_url), headers=auth.get_auth_headers(config))
     with ThreadPoolExecutor() as executor:
-        # wrap in list to join all threads
-        list(
-            executor.map(
-                put_item,
-                (namespace for _ in range(len(pdf_chunks))),
-                (uuid.uuid4().hex for _ in range(len(pdf_chunks))),
-                (
-                    {config.retrieval_text_field: chunk["content"], "chunk": chunk}
-                    for chunk in pdf_chunks
-                ),
-                (client for _ in range(len(pdf_chunks))),
-            )
-        )
+        for res in executor.map(
+            lambda chunk: client.put(
+                "/store/items",
+                json={
+                    "namespace": list(namespace),
+                    "key": uuid.uuid4().hex,
+                    "value": {config.retrieval_text_field: chunk["content"], "chunk": chunk},
+                    "index": [config.retrieval_text_field],
+                    "ttl": 60,
+                },
+            ),
+            pdf_chunks,
+        ):
+            res.raise_for_status()
 
 
-def put_item(
-    namespace: tuple[str, ...],
-    key: str,
-    value: dict,
-    httpx_client: httpx.Client,
-) -> None:
-    res = httpx_client.put(
-        "/store/items",
-        json={"namespace": list(namespace), "key": key, "value": value},
+def get_pdf_chunks(pdf: str | IO | Path, chunk_size: int, chunk_overlap: int) -> list[PDFChunk]:
+    text_splitter = RecursiveCharacterTextSplitter(
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap,
     )
-    res.raise_for_status()
-
-
-def get_pdf_chunks(pdf: str | IO | Path) -> list[PDFChunk]:
-    text_splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
 
     return [
         PDFChunk(page=page_idx, chunk=chunk_idx, content=chunk)

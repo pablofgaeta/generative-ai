@@ -29,7 +29,7 @@ index_store = store.load_store(
         "dims": 768,
         "embed": utils.create_retriever(
             model=runtime_settings.embedding_model_name,
-            batch_size=10,
+            batch_size=5,
             dimensionality=768,
             client=genai.Client(
                 vertexai=True,

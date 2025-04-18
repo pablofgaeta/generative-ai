@@ -32,3 +32,11 @@ env_variables:
     demo_task_planner__agent_id: "task-planner"
     demo_task_planner__base_url: "{concierge_host}/task-planner"
     demo_task_planner__fetch_id_token: true
+
+    demo_qna__agent_id: "doc-qna"
+    demo_qna__base_url: "{concierge_host}/qna"
+    demo_qna__fetch_id_token: true
+
+    demo_store__retrieval_text_field: "text"
+    demo_store__base_url: "{concierge_host}/default_store"
+    demo_store__fetch_id_token: true

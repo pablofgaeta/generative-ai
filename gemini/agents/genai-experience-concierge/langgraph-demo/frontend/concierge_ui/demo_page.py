@@ -8,6 +8,7 @@ from typing import Generator, Protocol
 import uuid
 
 from concierge_ui import auth, remote_settings
+import langchain_core.runnables.config as lc_config
 from langgraph.pregel import remote
 import streamlit as st
 
@@ -21,7 +22,7 @@ class ChatHandler(Protocol):  # pylint: disable=too-few-public-methods
         self,
         graph: remote.RemoteGraph,
         message: str,
-        thread_id: str,
+        runnable_config: lc_config.RunnableConfig,
     ) -> Generator[str, None, None]:
         """
         Handles a chat message.
@@ -29,7 +30,7 @@ class ChatHandler(Protocol):  # pylint: disable=too-few-public-methods
         Args:
             graph: The remote graph client to query the agent.
             message: The chat message.
-            thread_id: The ID of the chat thread.
+            runnable_config: The runnable configuration for the graph.
 
         Returns:
             A generator yielding the response chunks.
@@ -52,6 +53,7 @@ def build_demo_page(
     description: str,
     chat_handler: ChatHandler,
     config: remote_settings.RemoteAgentConfig,
+    base_runnable_config: lc_config.RunnableConfig | None = None,
 ) -> None:
     """
     Builds a demo page for a chat application using Streamlit.
@@ -96,6 +98,11 @@ def build_demo_page(
         with st.chat_message(message["role"]):
             st.write(message["content"])
 
+    runnable_config = base_runnable_config or lc_config.RunnableConfig()
+    runnable_config = lc_config.merge_configs(
+        runnable_config, {"configurable": {"thread_id": st.session_state[thread_key]}}
+    )
+
     # Accept user input
     if prompt := st.chat_input("What is up?"):
         # Add user message to chat history
@@ -111,7 +118,7 @@ def build_demo_page(
                 chat_handler(
                     graph=graph,
                     message=prompt,
-                    thread_id=st.session_state[thread_key],
+                    runnable_config=runnable_config,
                 )
             )
 

@@ -9,6 +9,7 @@ import json
 import logging
 from typing import Generator
 
+import langchain_core.runnables.config as lc_config
 from langgraph.pregel import remote
 
 logger = logging.getLogger(__name__)
@@ -17,7 +18,7 @@ logger = logging.getLogger(__name__)
 def chat_handler(
     graph: remote.RemoteGraph,
     message: str,
-    thread_id: str,
+    runnable_config: lc_config.RunnableConfig,
 ) -> Generator[str, None, None]:
     """
     Handles chat interactions for a function calling agent by streaming responses from a remote LangGraph.
@@ -36,14 +37,7 @@ def chat_handler(
     current_source = last_source = None
     for _, chunk in graph.stream(
         input={"current_turn": {"user_input": message}},
-        config={
-            "configurable": {
-                "thread_id": thread_id,
-                "fc_config": {
-                    "user_coordinate": {"latitude": 44.6508262, "longitude": -63.6408055}
-                },
-            }
-        },
+        config=runnable_config,
         stream_mode=["custom"],
     ):
         assert isinstance(chunk, dict), "Expected dictionary chunk"

@@ -68,7 +68,7 @@ class RemoteAgentConfigs(pydantic_settings.BaseSettings):
     )
     qna: RemoteAgentConfig = pydantic.Field(
         default_factory=lambda: RemoteAgentConfig(
-            agent_id="document-qna",
+            agent_id="doc-qna",
             base_url=pydantic.HttpUrl("http://0.0.0.0:3000/qna"),
         )
     )

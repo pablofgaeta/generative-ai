@@ -8,7 +8,6 @@ import functools
 from concierge_ui import demo_page, remote_settings
 from concierge_ui.agents import (
     function_calling,
-    gemini_chat,
     gemini_chat_with_guardrails,
     semantic_router,
     task_planner,
@@ -28,7 +27,7 @@ gemini_chat_page = st.Page(
 This demo illustrates a simple "agent" which just consists of plain Gemini 2.0 Flash with conversation history.
 Response text is streamed using a custom [langgraph.config.get_stream_writer](https://langchain-ai.github.io/langgraph/reference/config/#langgraph.config.get_stream_writer).
 """.strip(),
-        chat_handler=gemini_chat.chat_handler,
+        chat_handler=function_calling.chat_handler,
         config=settings.gemini,
     ),
     title="Gemini Chat",
@@ -76,6 +75,11 @@ Retail Search Assistant Use Cases:
 """.strip(),
         chat_handler=function_calling.chat_handler,
         config=settings.function_calling,
+        base_runnable_config={
+            "configurable": {
+                "fc_config": {"user_coordinate": {"latitude": 44.6508262, "longitude": -63.6408055}}
+            }
+        },
     ),
     title="Function Calling Agent",
     icon="📞",
@@ -128,25 +132,28 @@ The "Executor" agent in this demo is a Gemini model equipped with the Google Sea
 
 sxs_demo = st.Page(
     lambda: demo_page.build_generic_demo_page(
-        title="SxS Chat",
+        title="RAG SxS Comparison",
         icon="⚖️",
-        demo_id="sxs-chat",
+        demo_id="sxs-rag",
         description="""
-This demo demonstrates multi-turn RAG via function calling tool use. You may upload up to **X** PDF documents and chat with them, optionally generating side-by-side responses to compare different model versions. Text will be extracted from the documents and accessible in this session for an hour.
+This demo demonstrates multi-turn RAG via function calling tool use. You may upload multiple PDF documents and chat with them.
+Text will be extracted from the documents and accessible in this session for an hour.
 
 The vector store is implemented using a LangGraph Store instance. You can learn more about LangGraph Store [here](https://langchain-ai.github.io/langgraph/reference/store/).
+
+After generation, you can select "Compare Responses" to begin LLM-as-a-judge analysis.
 """.strip(),
         demo_builder=functools.partial(
             qna.demo_builder,
             namespace_prefix=settings.qna_store_namespace,
             store_config=settings.store,
-            left_config=settings.qna,
-            right_config=settings.qna,
+            qna_config=settings.qna,
+            judge_config=settings.gemini,
         ),
     ),
     title="SxS RAG",
     icon="⚖️",
-    url_path="qna-rag",
+    url_path="sxs-rag",
 )
 
 
